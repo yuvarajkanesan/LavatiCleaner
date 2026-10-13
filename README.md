@@ -8,6 +8,8 @@ duplicates and large forgotten files, shows exactly what it found, and removes o
 - **Careful on work PCs.** Security/management software, Windows event and tracing logs, and system folders
   are never touched. Managed PCs get extra locks. See [SECURITY.md](SECURITY.md).
 - **Private.** No network access, no telemetry. See [PRIVACY.md](PRIVACY.md).
+- **Drive optimization.** Defragments hard disks and trims SSDs (never defragmenting them) using Windows' own
+  optimizer. Needs administrator rights; the app never elevates by itself.
 - **No registry cleaner**, on purpose.
 - Light and dark themes. Rules are plain JSON in [`rules/`](rules).
 

@@ -3,18 +3,20 @@ from __future__ import annotations
 
 import heapq
 import os
+import re
 import shutil
 import threading
 import time
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 
-from ..core import analyzers, winapi
+from ..core import analyzers, disks, winapi
 from .. import APP_NAME, __version__
 from ..core.models import RuleResult
 from ..core.paths import app_root, data_dir, user_folders
 from . import theme
 from .theme import F, M, label
+from .dialogs import ProgressDialog
 from .widgets import Btn, Card, Check, CheckTree, Donut, Pill, ScrollFrame, Segmented, StackBar
 
 RISK_ORDER = {"safe": 0, "review": 1, "advanced": 2}
@@ -930,6 +932,140 @@ class LargePage(AnalyzerPage):
                         activeforeground=theme.AMBER, bd=0)
             m.add_command(label="Show in Explorer", command=lambda: winapi.show_in_explorer(self.items[iid].path))
             m.tk_popup(e.x_root, e.y_root)
+
+
+# --------------------------------------------------------------------- Optimize drives
+class OptimizePage(Page):
+    title = "Optimize"
+
+    def __init__(self, master, app):
+        super().__init__(master, app)
+        self.header("Optimize drives")
+        self.banner = Card(self, pad=16, fill=theme.WARN_BG, outline=theme.WARN_BORDER, radius=14)
+        row = tk.Frame(self.banner.body, bg=theme.WARN_BG)
+        row.pack(fill="x")
+        label(row, "⚠  Analyzing and optimizing drives needs administrator rights. Cleaning works without them.", 10,
+              fg=theme.AMBER, bg=theme.WARN_BG, wraplength=640, justify="left", anchor="w").pack(side="left")
+        Btn(row, "Restart as administrator", self._elevate, "ghost", padx=16, height=36).pack(side="right")
+        self.note = label(self, "Hard disks are defragmented. SSDs are never defragmented: optimizing one sends a "
+                                "TRIM so the drive can reclaim unused blocks.", 10, fg=theme.MUTED, wraplength=820,
+                          justify="left", anchor="w")
+        self.note.pack(anchor="w", pady=(0, 14))
+        self.sf = ScrollFrame(self, bg=theme.CONTENT)
+        self.sf.pack(fill="both", expand=True)
+        self.drives = []
+
+    def on_show(self):
+        a = self.app
+        if a.admin:
+            self.banner.pack_forget()
+        else:
+            self.banner.pack(fill="x", pady=(0, 14), before=self.note)
+        self.sf.clear()
+        self.drives = disks.list_drives()
+        if not self.drives:
+            label(self.sf.inner, "No fixed drives found.", 10, fg=theme.MUTED, bg=theme.CONTENT).pack(pady=40)
+        for d in self.drives:
+            self._card(d)
+
+    def _state(self, letter):
+        return self.app.store.get(f"optimize:{letter}", {}) or {}
+
+    def _card(self, d):
+        c = Card(self.sf.inner, pad=20, radius=16)
+        c.pack(fill="x", pady=(0, 12), padx=(0, 4))
+        row = tk.Frame(c.body, bg=theme.CARD)
+        row.pack(fill="x")
+        badge = tk.Canvas(row, width=56, height=56, bg=theme.CARD, highlightthickness=0, bd=0)
+        badge.pack(side="left")
+        badge.create_oval(0, 0, 55, 55, fill=theme.AMBER_DIM, outline="")
+        badge.create_text(28, 28, text=f"{d.letter}:", font=theme.F(15, True), fill=theme.AMBER)
+        info = tk.Frame(row, bg=theme.CARD)
+        info.pack(side="left", padx=16)
+        top = tk.Frame(info, bg=theme.CARD)
+        top.pack(anchor="w")
+        label(top, d.label or "Local Disk", 12, True).pack(side="left")
+        kind = {"ssd": ("SSD", "safe"), "hdd": ("Hard disk", "review")}.get(d.kind, ("Unknown", "muted"))
+        Pill(top, kind[0], kind[1]).pack(side="left", padx=10)
+        label(info, f"{d.fs}  ·  {theme.fmt_size(d.used)} of {theme.fmt_size(d.total)} used  ·  "
+                    f"{theme.fmt_size(d.free)} free", 10, fg=theme.MUTED).pack(anchor="w", pady=(2, 0))
+        st = self._state(d.letter)
+        frag = st.get("frag")
+        if frag is not None:
+            tone, word = ("safe", "healthy") if frag <= 5 else (("review", "could use a defrag") if frag <= 15
+                                                                else ("advanced", "defragment recommended"))
+            line = tk.Frame(info, bg=theme.CARD)
+            line.pack(anchor="w", pady=(6, 0))
+            Pill(line, f"{frag}% fragmented", tone).pack(side="left")
+            label(line, f"  {word}  ·  analyzed {theme.fmt_time(st['analyzed'])}", 9, fg=theme.MUTED).pack(side="left")
+        if st.get("optimized"):
+            label(info, f"Last optimized {theme.fmt_time(st['optimized'])}", 9, fg=theme.MUTED).pack(anchor="w", pady=(4, 0))
+
+        btns = tk.Frame(row, bg=theme.CARD)
+        btns.pack(side="right")
+        ok = self.app.admin
+        go = Btn(btns, "Defragment" if d.can_defrag else "Optimize", lambda dr=d: self._run(dr, "optimize"), "primary",
+                 padx=20)
+        go.pack(side="right")
+        go.set_enabled(ok)
+        if d.can_defrag:
+            an = Btn(btns, "Analyze", lambda dr=d: self._run(dr, "analyze"), "ghost", padx=20)
+            an.pack(side="right", padx=(0, 10))
+            an.set_enabled(ok)
+
+    def _elevate(self):
+        if messagebox.askyesno(APP_NAME, "Restart Lavati Cleaner with administrator rights?\n\nWindows will ask "
+                               "you to confirm. Nothing is changed until you press a button.", parent=self):
+            if winapi.restart_as_admin():
+                self.app.destroy()
+
+    def _run(self, d, mode):
+        a = self.app
+        if a.busy:
+            return
+        if mode == "optimize":
+            what = ("Defragmenting a hard disk can take from minutes to a few hours. You can keep using the PC, "
+                    "and you can cancel at any time." if d.can_defrag else
+                    "This sends a TRIM to the SSD so it can reclaim unused blocks. It usually takes seconds.")
+            if not messagebox.askyesno(APP_NAME, f"{'Defragment' if d.can_defrag else 'Optimize'} drive {d.letter}:?"
+                                       f"\n\n{what}", parent=self):
+                return
+        a.busy = True
+        cancel = threading.Event()
+        dlg = ProgressDialog(a, f"{'Analyzing' if mode == 'analyze' else 'Optimizing'} {d.letter}:", cancel)
+
+        def on_line(line):
+            m = re.search(r"(\d{1,3})\s*%", line)
+            pct = min(100, int(m.group(1))) if m else None
+            text = line.strip()
+            a.post(lambda: dlg.update_progress(pct or 0, 100, text) if text else None)
+
+        def work():
+            return disks.run_defrag(d.letter, mode, on_line, cancel)
+
+        def done(res):
+            a.busy = False
+            dlg.close()
+            if isinstance(res, Exception):
+                messagebox.showerror(APP_NAME, f"Could not run the optimizer:\n{res}", parent=self)
+                return
+            ok, err, text = res
+            if not ok:
+                if err != "Cancelled.":
+                    messagebox.showerror(APP_NAME, err, parent=self)
+                return
+            st = self._state(d.letter)
+            if mode == "analyze":
+                st.update(frag=disks.parse_fragmentation(text), analyzed=time.time())
+            else:
+                st.update(optimized=time.time())
+                frag = st.get("frag")
+                if frag is not None and d.can_defrag:
+                    st["frag"] = None          # old number no longer true: analyze again to see the new one
+            a.store.set(f"optimize:{d.letter}", st)
+            self.on_show()
+
+        a.run_bg(work, done)
 
 
 # --------------------------------------------------------------------- History

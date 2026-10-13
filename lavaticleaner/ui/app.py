@@ -22,7 +22,7 @@ from ..core.scanner import RECYCLE_PSEUDO_PATH, ScanContext, scan_all
 from . import theme
 from .dialogs import ConfirmDialog, ProgressDialog, ResultDialog
 from .pages import (LOG_RULES, CleanerPage, DashboardPage, DuplicatesPage, HistoryPage, LargePage,
-                    SettingsPage)
+                    OptimizePage, SettingsPage)
 from .theme import F, label
 
 log = logging.getLogger("lavati")
@@ -30,6 +30,7 @@ log = logging.getLogger("lavati")
 # (name, class, Segoe MDL2 glyph)
 PAGES = [("Dashboard", DashboardPage, ""), ("Cleaner", CleanerPage, ""),
          ("Duplicates", DuplicatesPage, ""), ("Large & empty", LargePage, ""),
+         ("Optimize", OptimizePage, ""),
          ("History", HistoryPage, ""), ("Settings", SettingsPage, "")]
 
 ANALYZER_LABELS = {"analyzer:duplicates": "Duplicate files", "analyzer:large": "Large files",

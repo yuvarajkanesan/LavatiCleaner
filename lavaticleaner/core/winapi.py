@@ -201,3 +201,18 @@ def flush_dns() -> tuple[bool, str]:
         return (r.returncode == 0), ("" if r.returncode == 0 else "Needs administrator rights")
     except Exception as e:
         return False, str(e)
+
+
+def restart_as_admin() -> bool:
+    """Relaunch this app elevated. Only ever called from a button the user pressed; Windows shows its own
+    UAC prompt. False if the user declined it."""
+    if not IS_WINDOWS:
+        return False
+    if getattr(sys, "frozen", False):
+        exe, params = sys.executable, ""
+    else:
+        exe, params = sys.executable, f'"{os.path.abspath(sys.argv[0])}"'
+    try:
+        return ctypes.windll.shell32.ShellExecuteW(None, "runas", exe, params, None, 1) > 32
+    except Exception:
+        return False
