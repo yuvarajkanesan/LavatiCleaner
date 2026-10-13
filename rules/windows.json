@@ -1,0 +1,432 @@
+{
+ "rules": [
+  {
+   "id": "edge_cache",
+   "category": "Edge Browser",
+   "label": "Page & asset cache",
+   "tab": "windows",
+   "risk": "safe",
+   "paths": [
+    "%LOCALAPPDATA%\\Microsoft\\Edge\\User Data\\*\\Cache",
+    "%LOCALAPPDATA%\\Microsoft\\Edge\\User Data\\*\\Code Cache",
+    "%LOCALAPPDATA%\\Microsoft\\Edge\\User Data\\*\\GPUCache",
+    "%LOCALAPPDATA%\\Microsoft\\Edge\\User Data\\*\\Service Worker\\CacheStorage"
+   ],
+   "requires_closed": [
+    "msedge.exe"
+   ],
+   "note": "Temporary web files the browser rebuilds as you browse. Pages may load a little slower the first time afterwards.",
+   "quarantine": false
+  },
+  {
+   "id": "edge_cookies",
+   "category": "Edge Browser",
+   "label": "Cookies & site data",
+   "tab": "windows",
+   "risk": "review",
+   "paths": [
+    "%LOCALAPPDATA%\\Microsoft\\Edge\\User Data\\*",
+    "%LOCALAPPDATA%\\Microsoft\\Edge\\User Data\\*\\Network"
+   ],
+   "include": [
+    "Cookies",
+    "Cookies-journal"
+   ],
+   "recursive": false,
+   "requires_closed": [
+    "msedge.exe"
+   ],
+   "note": "Signs you out of websites and resets site preferences. Removed files go to quarantine, so you can restore them."
+  },
+  {
+   "id": "edge_history",
+   "category": "Edge Browser",
+   "label": "Browsing trail",
+   "tab": "windows",
+   "risk": "review",
+   "paths": [
+    "%LOCALAPPDATA%\\Microsoft\\Edge\\User Data\\*"
+   ],
+   "include": [
+    "History",
+    "History-journal",
+    "Visited Links",
+    "Top Sites",
+    "Top Sites-journal",
+    "Favicons",
+    "Favicons-journal"
+   ],
+   "recursive": false,
+   "requires_closed": [
+    "msedge.exe"
+   ],
+   "note": "Clears the visited-pages list and top-site thumbnails. Bookmarks are not touched. Restorable from quarantine."
+  },
+  {
+   "id": "edge_session",
+   "category": "Edge Browser",
+   "label": "Last-session tabs",
+   "tab": "windows",
+   "risk": "review",
+   "paths": [
+    "%LOCALAPPDATA%\\Microsoft\\Edge\\User Data\\*",
+    "%LOCALAPPDATA%\\Microsoft\\Edge\\User Data\\*\\Sessions"
+   ],
+   "include": [
+    "Current Session",
+    "Current Tabs",
+    "Last Session",
+    "Last Tabs",
+    "Session_*",
+    "Tabs_*"
+   ],
+   "recursive": false,
+   "requires_closed": [
+    "msedge.exe"
+   ],
+   "note": "Forgets the tabs from your last session, so 'restore previous tabs' will have nothing to bring back."
+  },
+  {
+   "id": "edge_forms",
+   "category": "Edge Browser",
+   "label": "Autofill profiles",
+   "tab": "windows",
+   "risk": "advanced",
+   "paths": [
+    "%LOCALAPPDATA%\\Microsoft\\Edge\\User Data\\*"
+   ],
+   "include": [
+    "Web Data",
+    "Web Data-journal"
+   ],
+   "recursive": false,
+   "requires_closed": [
+    "msedge.exe"
+   ],
+   "note": "Removes saved autofill entries (names, addresses, cards saved in the browser). Restorable from quarantine."
+  },
+  {
+   "id": "edge_logins",
+   "category": "Edge Browser",
+   "label": "Stored sign-ins",
+   "tab": "windows",
+   "risk": "advanced",
+   "paths": [
+    "%LOCALAPPDATA%\\Microsoft\\Edge\\User Data\\*"
+   ],
+   "include": [
+    "Login Data",
+    "Login Data-journal",
+    "Login Data For Account",
+    "Login Data For Account-journal"
+   ],
+   "recursive": false,
+   "requires_closed": [
+    "msedge.exe"
+   ],
+   "note": "Removes passwords saved in this browser, so you must sign in again. Restorable from quarantine. Passwords synced to an account can return on the next sync."
+  },
+  {
+   "id": "legacy_cache",
+   "category": "Classic Web Engine",
+   "label": "Legacy web cache",
+   "tab": "windows",
+   "risk": "safe",
+   "paths": [
+    "%LOCALAPPDATA%\\Microsoft\\Windows\\INetCache"
+   ],
+   "note": "Cache used by Internet Explorer mode and embedded web views. Rebuilt on demand.",
+   "quarantine": false
+  },
+  {
+   "id": "legacy_cookies",
+   "category": "Classic Web Engine",
+   "label": "Legacy cookies",
+   "tab": "windows",
+   "risk": "review",
+   "paths": [
+    "%LOCALAPPDATA%\\Microsoft\\Windows\\INetCookies"
+   ],
+   "note": "Signs you out of websites and resets site preferences. Removed files go to quarantine, so you can restore them."
+  },
+  {
+   "id": "legacy_history",
+   "category": "Classic Web Engine",
+   "label": "Legacy visit list",
+   "tab": "windows",
+   "risk": "review",
+   "paths": [
+    "%LOCALAPPDATA%\\Microsoft\\Windows\\History"
+   ],
+   "note": "Clears the visited-pages list and top-site thumbnails. Bookmarks are not touched. Restorable from quarantine."
+  },
+  {
+   "id": "recent_docs",
+   "category": "File Explorer Traces",
+   "label": "Recently opened shortcuts",
+   "tab": "windows",
+   "risk": "safe",
+   "paths": [
+    "%APPDATA%\\Microsoft\\Windows\\Recent"
+   ],
+   "include": [
+    "*.lnk"
+   ],
+   "recursive": false,
+   "note": "The shortcuts behind Recent files lists. Your documents themselves are not touched.",
+   "quarantine": false
+  },
+  {
+   "id": "jump_lists",
+   "category": "File Explorer Traces",
+   "label": "Taskbar jump lists",
+   "tab": "windows",
+   "risk": "safe",
+   "paths": [
+    "%APPDATA%\\Microsoft\\Windows\\Recent\\AutomaticDestinations",
+    "%APPDATA%\\Microsoft\\Windows\\Recent\\CustomDestinations"
+   ],
+   "include": [
+    "*.automaticDestinations-ms",
+    "*.customDestinations-ms"
+   ],
+   "recursive": false,
+   "note": "Recent and pinned items shown when you right-click a taskbar icon. Pinned items are forgotten too.",
+   "quarantine": false
+  },
+  {
+   "id": "thumbnails",
+   "category": "File Explorer Traces",
+   "label": "Thumbnail & icon cache",
+   "tab": "windows",
+   "risk": "safe",
+   "paths": [
+    "%LOCALAPPDATA%\\Microsoft\\Windows\\Explorer"
+   ],
+   "include": [
+    "thumbcache_*.db",
+    "iconcache_*.db"
+   ],
+   "recursive": false,
+   "note": "Picture previews and icons Explorer rebuilds when needed.",
+   "quarantine": false
+  },
+  {
+   "id": "recycle_bin",
+   "category": "Windows Housekeeping",
+   "label": "Recycle Bin",
+   "tab": "windows",
+   "risk": "safe",
+   "paths": [],
+   "note": "Empties the Recycle Bin on every drive. Its files cannot be restored afterwards.",
+   "action": "recycle_bin"
+  },
+  {
+   "id": "user_temp",
+   "category": "Windows Housekeeping",
+   "label": "Personal temp files",
+   "tab": "windows",
+   "risk": "safe",
+   "paths": [
+    "%TEMP%"
+   ],
+   "min_age_days": 1,
+   "note": "Leftovers programs create in your temp folder. Files from the last day are left alone.",
+   "quarantine": false
+  },
+  {
+   "id": "windows_temp",
+   "category": "Windows Housekeeping",
+   "label": "System temp files",
+   "tab": "windows",
+   "risk": "safe",
+   "paths": [
+    "%SystemRoot%\\Temp"
+   ],
+   "min_age_days": 1,
+   "note": "Files you cannot delete without administrator rights are skipped, never forced.",
+   "quarantine": false
+  },
+  {
+   "id": "clipboard",
+   "category": "Windows Housekeeping",
+   "label": "Clipboard contents",
+   "tab": "windows",
+   "risk": "safe",
+   "paths": [],
+   "note": "Clears whatever you last copied. Handy after copying a password.",
+   "action": "clipboard"
+  },
+  {
+   "id": "dns_cache",
+   "category": "Windows Housekeeping",
+   "label": "Name-lookup cache",
+   "tab": "windows",
+   "risk": "safe",
+   "paths": [],
+   "note": "Flushes the DNS resolver cache. Needs administrator rights on some PCs.",
+   "action": "flush_dns"
+  },
+  {
+   "id": "crash_dumps",
+   "category": "Windows Housekeeping",
+   "label": "Application crash dumps",
+   "tab": "windows",
+   "risk": "safe",
+   "paths": [
+    "%LOCALAPPDATA%\\CrashDumps"
+   ],
+   "note": "Diagnostic snapshots Windows saved when apps crashed.",
+   "quarantine": false
+  },
+  {
+   "id": "memory_dumps",
+   "category": "Windows Housekeeping",
+   "label": "System memory dumps",
+   "tab": "windows",
+   "risk": "safe",
+   "paths": [
+    "%SystemRoot%\\Minidump",
+    "%SystemRoot%\\MEMORY.DMP"
+   ],
+   "requires_admin": true,
+   "note": "Large blue-screen snapshots. Keep them if you are chasing a crash.",
+   "quarantine": false
+  },
+  {
+   "id": "wer",
+   "category": "Windows Housekeeping",
+   "label": "Error report archive",
+   "tab": "windows",
+   "risk": "safe",
+   "paths": [
+    "%LOCALAPPDATA%\\Microsoft\\Windows\\WER",
+    "%ProgramData%\\Microsoft\\Windows\\WER"
+   ],
+   "note": "Queued and archived Windows Error Reporting data.",
+   "quarantine": false
+  },
+  {
+   "id": "old_logs",
+   "category": "Windows Housekeeping",
+   "label": "Servicing logs",
+   "tab": "windows",
+   "risk": "safe",
+   "paths": [
+    "%SystemRoot%\\Logs\\CBS",
+    "%SystemRoot%\\Logs\\DISM"
+   ],
+   "include": [
+    "*.log",
+    "*.cab"
+   ],
+   "requires_admin": true,
+   "min_age_days": 30,
+   "note": "Old Windows servicing logs.",
+   "quarantine": false
+  },
+  {
+   "id": "chkdsk_frag",
+   "category": "Windows Housekeeping",
+   "label": "Disk-check fragments",
+   "tab": "windows",
+   "risk": "safe",
+   "paths": [
+    "%SystemDrive%\\found.*"
+   ],
+   "include": [
+    "*.chk"
+   ],
+   "requires_admin": true,
+   "note": "File fragments chkdsk recovered (FILE0000.CHK). Check them before deleting if you lost data.",
+   "quarantine": false
+  },
+  {
+   "id": "store_cache",
+   "category": "Windows Housekeeping",
+   "label": "Microsoft Store cache",
+   "tab": "windows",
+   "risk": "safe",
+   "paths": [
+    "%LOCALAPPDATA%\\Packages\\Microsoft.WindowsStore_8wekyb3d8bbwe\\LocalCache"
+   ],
+   "note": "Downloaded store listings and images.",
+   "quarantine": false
+  },
+  {
+   "id": "shader_cache",
+   "category": "Windows Housekeeping",
+   "label": "Graphics shader caches",
+   "tab": "windows",
+   "risk": "safe",
+   "paths": [
+    "%LOCALAPPDATA%\\D3DSCache",
+    "%LOCALAPPDATA%\\NVIDIA\\DXCache",
+    "%LOCALAPPDATA%\\NVIDIA\\GLCache",
+    "%LOCALAPPDATA%\\AMD\\DxCache"
+   ],
+   "note": "Compiled GPU shaders. Games rebuild them, which can cause brief stutter on the next launch.",
+   "quarantine": false
+  },
+  {
+   "id": "font_cache",
+   "category": "Windows Housekeeping",
+   "label": "Font cache",
+   "tab": "windows",
+   "risk": "safe",
+   "paths": [
+    "%SystemRoot%\\ServiceProfiles\\LocalService\\AppData\\Local\\FontCache"
+   ],
+   "include": [
+    "*.dat"
+   ],
+   "recursive": false,
+   "requires_admin": true,
+   "note": "Windows rebuilds the font cache at next start.",
+   "quarantine": false
+  },
+  {
+   "id": "windows_update",
+   "category": "Deep Clean",
+   "label": "Update download cache",
+   "tab": "windows",
+   "risk": "review",
+   "paths": [
+    "%SystemRoot%\\SoftwareDistribution\\Download"
+   ],
+   "requires_admin": true,
+   "note": "Windows re-downloads updates if needed. Do not clean while an update is pending.",
+   "quarantine": false
+  },
+  {
+   "id": "delivery_optimization",
+   "category": "Deep Clean",
+   "label": "Delivery Optimization cache",
+   "tab": "windows",
+   "risk": "review",
+   "paths": [
+    "%SystemRoot%\\ServiceProfiles\\NetworkService\\AppData\\Local\\Microsoft\\Windows\\DeliveryOptimization\\Cache"
+   ],
+   "requires_admin": true,
+   "note": "Update pieces kept to share with other PCs. Rebuilt on demand.",
+   "quarantine": false
+  },
+  {
+   "id": "prefetch",
+   "category": "Deep Clean",
+   "label": "Launch-speed hints",
+   "tab": "windows",
+   "risk": "review",
+   "paths": [
+    "%SystemRoot%\\Prefetch"
+   ],
+   "include": [
+    "*.pf"
+   ],
+   "recursive": false,
+   "requires_admin": true,
+   "note": "Windows rebuilds these; the first launch of each app may be slightly slower.",
+   "quarantine": false
+  }
+ ]
+}

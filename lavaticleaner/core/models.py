@@ -3,13 +3,14 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 RISKS = ("safe", "review", "advanced")
-ACTIONS = ("delete", "recycle_bin")
+ACTIONS = ("delete", "recycle_bin", "clipboard", "flush_dns")
+TABS = ("windows", "apps")
 
 
 @dataclass(slots=True)
 class Rule:
     id: str
-    category: str
+    category: str                        # group shown in the Cleaner (e.g. "Edge Browser")
     label: str
     risk: str = "safe"
     paths: list = field(default_factory=list)
@@ -24,6 +25,7 @@ class Rule:
     skip_dirs: list = field(default_factory=lambda: [".git", "node_modules", ".venv", "venv"])
     quarantine: bool | None = None       # None -> derived from risk
     note: str = ""
+    tab: str = "windows"                 # which Cleaner tab lists it: windows | apps
 
     @property
     def use_quarantine(self) -> bool:

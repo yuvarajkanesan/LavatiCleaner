@@ -11,7 +11,7 @@ from . import winapi
 from .models import Item, RunReport, Skipped
 from .quarantine import Quarantine
 from .safety import ANALYZER_PREFIX, SafetyGuard
-from .scanner import RECYCLE_PSEUDO_PATH, is_reparse
+from .scanner import CLIPBOARD_PSEUDO_PATH, DNS_PSEUDO_PATH, RECYCLE_PSEUDO_PATH, is_reparse
 
 
 def new_run_id() -> str:
@@ -89,6 +89,16 @@ class Executor:
                         else:
                             report.skipped.append(Skipped("Recycle Bin", why, item.size, item.rule_id))
                     report.by_rule[item.rule_id] = report.by_rule.get(item.rule_id, 0) + item.size
+                    continue
+
+                if item.path in (CLIPBOARD_PSEUDO_PATH, DNS_PSEUDO_PATH):
+                    if not dry_run:
+                        ok, why = (winapi.clear_clipboard() if item.path == CLIPBOARD_PSEUDO_PATH
+                                   else winapi.flush_dns())
+                        if not ok:
+                            report.skipped.append(Skipped(item.path, why, 0, item.rule_id))
+                            continue
+                    report.by_rule[item.rule_id] = report.by_rule.get(item.rule_id, 0)
                     continue
 
                 ok, why = self.guard.check(item.path, item.rule_id, fresh=not dry_run)

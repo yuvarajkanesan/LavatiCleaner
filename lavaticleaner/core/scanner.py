@@ -14,6 +14,8 @@ from .models import Item, Rule, RuleResult
 
 REPARSE = 0x400  # FILE_ATTRIBUTE_REPARSE_POINT (junctions, symlinks, OneDrive placeholders)
 RECYCLE_PSEUDO_PATH = "::recycle_bin::"
+CLIPBOARD_PSEUDO_PATH = "::clipboard::"
+DNS_PSEUDO_PATH = "::dns::"
 
 
 def is_reparse(st: os.stat_result) -> bool:
@@ -122,6 +124,12 @@ def scan_rule(rule: Rule, ctx: ScanContext, cancel=None) -> RuleResult:
     res.running = [p for p in rule.requires_closed if p.lower() in ctx.running]
     if rule.requires_admin and not ctx.admin:
         res.status = "needs_admin"
+        return res
+
+    if rule.action in ("clipboard", "flush_dns"):      # one-shot actions: nothing to size
+        path = CLIPBOARD_PSEUDO_PATH if rule.action == "clipboard" else DNS_PSEUDO_PATH
+        res.items.append(Item(path, 0, ctx.now, rule.id, 1))
+        res.count = 1
         return res
 
     if rule.action == "recycle_bin":

@@ -174,3 +174,30 @@ def open_file(path: str) -> None:
     """Open a bundled document with the default viewer (only files that exist)."""
     if IS_WINDOWS and os.path.isfile(path):
         os.startfile(path)  # noqa: S606 - fixed, app-bundled file names only
+
+
+def clear_clipboard() -> tuple[bool, str]:
+    if not IS_WINDOWS:
+        return False, "Windows only"
+    try:
+        u = ctypes.windll.user32
+        if not u.OpenClipboard(None):
+            return False, "Clipboard is in use by another program"
+        try:
+            u.EmptyClipboard()
+        finally:
+            u.CloseClipboard()
+        return True, ""
+    except Exception as e:
+        return False, str(e)
+
+
+def flush_dns() -> tuple[bool, str]:
+    if not IS_WINDOWS:
+        return False, "Windows only"
+    try:
+        r = subprocess.run([_system_exe("ipconfig.exe"), "/flushdns"], capture_output=True, text=True,
+                           creationflags=CREATE_NO_WINDOW, timeout=20)
+        return (r.returncode == 0), ("" if r.returncode == 0 else "Needs administrator rights")
+    except Exception as e:
+        return False, str(e)

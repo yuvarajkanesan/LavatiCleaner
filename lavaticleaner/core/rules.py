@@ -5,7 +5,7 @@ import glob
 import json
 import os
 
-from .models import ACTIONS, RISKS, Rule
+from .models import ACTIONS, RISKS, TABS, Rule
 
 _FIELDS = set(Rule.__dataclass_fields__)
 
@@ -20,6 +20,8 @@ def _build(d: dict) -> Rule:
     rule = Rule(**d)
     if rule.risk not in RISKS:
         raise ValueError(f"risk must be one of {RISKS}")
+    if rule.tab not in TABS:
+        raise ValueError(f"tab must be one of {TABS}")
     if rule.action not in ACTIONS:
         raise ValueError(f"action must be one of {ACTIONS}")
     if rule.action == "delete" and not rule.paths:

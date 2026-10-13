@@ -11,6 +11,7 @@ from tkinter import filedialog, messagebox, ttk
 
 from ..core import analyzers, winapi
 from .. import APP_NAME, __version__
+from ..core.models import RuleResult
 from ..core.paths import app_root, data_dir, user_folders
 from . import theme
 from .theme import F, M, label
@@ -29,10 +30,8 @@ DESCRIPTIONS = {
 
 
 def group_of(rule):
-    """Browser caches are shown as one expandable group; every other rule stands alone."""
-    if rule.category == "Browsers":
-        return "grp:browsers", "Browser cache"
-    return rule.id, rule.label
+    """Groups are the rule categories (Edge Browser, Windows Housekeeping, ...)."""
+    return rule.category, rule.category
 
 
 def worst_risk(rules):
@@ -232,6 +231,12 @@ class CleanerPage(Page):
         self.header("Cleaner")
         self.checked: set[str] = set()
         self._scan_id = -1
+        self.tab = "windows"
+        tabs = tk.Frame(self, bg=theme.CONTENT)
+        tabs.pack(fill="x", pady=(0, 12))
+        Segmented(tabs, [("windows", "Windows"), ("apps", "Applications")], "windows", self._set_tab
+                  ).pack(side="left")
+        Btn(tabs, "Analyze", app.start_scan, "ghost", padx=20, height=36).pack(side="right")
         self.selected = None
         self.rows: dict[str, tuple] = {}
         self.groups: dict[str, tuple] = {}
@@ -265,10 +270,27 @@ class CleanerPage(Page):
     def on_show(self):
         if self._scan_id != self.app.scan_id:
             self._scan_id = self.app.scan_id
-            self.checked = {rid for rid, r in self.app.results.items()
-                            if r.status == "ok" and r.rule.risk == "safe" and not r.running and r.count}
+            oneshot = ("clipboard", "flush_dns")
+            if self.app.results:
+                self.checked = {rid for rid, r in self.app.results.items()
+                                if r.status == "ok" and r.rule.risk == "safe" and not r.running and r.count
+                                and r.rule.action not in oneshot}
+            else:                    # before the first scan: the safe items are ticked, nothing is sized yet
+                self.checked = {r.id for r in self.app.rules if r.risk == "safe" and r.action not in oneshot}
             self.selected = None
         self.rebuild()
+
+    def _set_tab(self, key):
+        self.tab = key
+        self.selected = None
+        self.rebuild()
+
+    def _result(self, rid):
+        res = self.app.results.get(rid)
+        if res is None:
+            rule = next((r for r in self.app.rules if r.id == rid), None)
+            res = RuleResult(rule=rule, status="unscanned") if rule else None
+        return res
 
     def rebuild(self):
         sf = self.sf
@@ -276,19 +298,21 @@ class CleanerPage(Page):
         self.rows.clear()
         self.groups.clear()
         groups: dict[str, list] = {}
-        for res in sorted(self.app.results.values(), key=lambda r: -r.size):
-            if res.status == "empty":
-                continue
-            key, lab = group_of(res.rule)
-            groups.setdefault(key, [lab, []])[1].append(res)
-        if not groups:
-            label(sf.inner, "Nothing to show yet. Run a scan from the Dashboard.", 10, fg=theme.MUTED, bg=theme.CARD
-                  ).pack(pady=40)
-        for key, (lab, lst) in sorted(groups.items(), key=lambda kv: -sum(r.size for r in kv[1][1])):
-            if len(lst) == 1:
-                self._rule_row(sf.inner, lst[0], 0)
-            else:
-                self._group(sf.inner, key, lab, lst)
+        for rule in self.app.rules:                       # the whole catalog is listed, scanned or not
+            if rule.tab == self.tab:
+                groups.setdefault(rule.category, []).append(self._result(rule.id))
+        scanned = bool(self.app.results)
+        order = list(groups.items())
+        if scanned:
+            for _k, lst in order:
+                lst.sort(key=lambda r: -r.size)
+            order.sort(key=lambda kv: -sum(r.size for r in kv[1]))
+        opened = 0
+        for cat, lst in order:
+            has_data = any(r.count for r in lst)
+            expand = (has_data and opened < 3) or (not scanned and opened < 2)
+            opened += 1 if expand else 0
+            self._group(sf.inner, cat, cat, lst, expand)
         for key in self.groups:
             self._refresh_group(key)
         if self.selected not in self.rows:
@@ -308,10 +332,17 @@ class CleanerPage(Page):
         chk = Check(inner, "on" if (r.id in self.checked and not disabled) else "off", disabled=disabled,
                     command=lambda v, rid=r.id: self._toggle(rid, v))
         chk.pack(side="left")
-        name = label(inner, r.label, 10, fg=theme.TEXT if not disabled else theme.MUTED)
+        dim = disabled or res.status == "empty"
+        name = label(inner, r.label, 10, fg=theme.MUTED if dim else theme.TEXT)
         name.pack(side="left", padx=12)
-        label(inner, "—" if disabled else theme.fmt_size(res.size), 10, True, mono=True,
-              fg=theme.TEXT if not disabled else theme.FAINT, width=10, anchor="e").pack(side="right")
+        if r.action in ("clipboard", "flush_dns") and res.status == "ok":
+            size_text = "Ready"
+        elif dim or res.status == "unscanned":
+            size_text = "—"
+        else:
+            size_text = theme.fmt_size(res.size)
+        label(inner, size_text, 10, True, mono=True, fg=theme.FAINT if dim else theme.TEXT, width=10, anchor="e"
+              ).pack(side="right")
         if res.running:
             Pill(inner, "Running", "running").pack(side="right", padx=10)
         elif disabled:
@@ -322,14 +353,14 @@ class CleanerPage(Page):
             w.bind("<Button-1>", lambda _e, rid=r.id: self._select(rid))
         self.rows[r.id] = (accent, chk, disabled)
 
-    def _group(self, parent, key, lab, lst):
+    def _group(self, parent, key, lab, lst, expand=True):
         wrap = tk.Frame(parent, bg=theme.CARD)
         wrap.pack(fill="x")
         head = tk.Frame(wrap, bg=theme.CARD, cursor="hand2")
         head.pack(fill="x", padx=14, pady=(10, 4))
-        arrow = label(head, "▾", 12, fg=theme.MUTED, width=2)
+        arrow = label(head, "▾" if expand else "▸", 12, fg=theme.MUTED, width=2)
         arrow.pack(side="left")
-        selectable = [r.rule.id for r in lst if r.status == "ok"]
+        selectable = [r.rule.id for r in lst if r.status in ("ok", "unscanned")]
         chk = Check(head, "off", command=lambda v, ids=selectable, k=key: self._toggle_group(k, ids, v))
         chk.pack(side="left")
         col = tk.Frame(head, bg=theme.CARD)
@@ -337,11 +368,13 @@ class CleanerPage(Page):
         label(col, lab, 10, True).pack(anchor="w")
         sub = label(col, "", 9, fg=theme.MUTED)
         sub.pack(anchor="w")
-        label(head, theme.fmt_size(sum(r.size for r in lst)), 10, True, mono=True, width=10, anchor="e").pack(side="right")
+        label(head, theme.fmt_size(sum(r.size for r in lst)) if self.app.results else "—", 10, True, mono=True,
+              width=10, anchor="e").pack(side="right")
         Pill(head, theme.RISK_LABEL[worst_risk([r.rule for r in lst])], worst_risk([r.rule for r in lst])
              ).pack(side="right", padx=10)
         kids = tk.Frame(wrap, bg=theme.CARD)
-        kids.pack(fill="x")
+        if expand:
+            kids.pack(fill="x")
         for res in lst:
             self._rule_row(kids, res, 28)
 
@@ -386,7 +419,7 @@ class CleanerPage(Page):
         d = self.detail
         for w in d.winfo_children():
             w.destroy()
-        res = self.app.results.get(rid)
+        res = self._result(rid) if rid else None
         if not res:
             label(d, "Select an item to see details.", 10, fg=theme.MUTED).pack(anchor="w")
             return
@@ -399,6 +432,12 @@ class CleanerPage(Page):
             label(d, "Needs administrator rights", 10, fg=theme.MUTED).pack(anchor="w", pady=(4, 10))
         elif res.status == "managed":
             label(d, "Managed by your organization", 10, fg=theme.MUTED).pack(anchor="w", pady=(4, 10))
+        elif res.status == "unscanned":
+            label(d, "Not scanned yet. Press Analyze.", 10, fg=theme.MUTED).pack(anchor="w", pady=(4, 10))
+        elif res.status == "empty":
+            label(d, "Nothing found", 10, fg=theme.MUTED).pack(anchor="w", pady=(4, 10))
+        elif r.action in ("clipboard", "flush_dns"):
+            label(d, "Runs when you clean", 10, fg=theme.MUTED).pack(anchor="w", pady=(4, 10))
         else:
             label(d, f"{theme.fmt_size(res.size)} in {theme.fmt_count(res.count)} files", 10, fg=theme.MUTED
                   ).pack(anchor="w", pady=(4, 10))

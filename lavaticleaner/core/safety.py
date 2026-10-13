@@ -22,8 +22,8 @@ PROTECTED_WHY = "Protected: security, audit or management data"
 
 # Rules that touch Windows servicing, diagnostics or crash/log data that IT teams rely on. They are
 # switched off (shown as "Managed") on a PC that looks managed by an organisation.
-MANAGED_LOCKED_RULES = {"windows_temp", "windows_update", "delivery_optimization", "prefetch",
-                        "old_logs", "wer", "crash_dumps"}
+MANAGED_LOCKED_RULES = {"windows_temp", "windows_update", "delivery_optimization", "prefetch", "old_logs",
+                        "wer", "crash_dumps", "memory_dumps", "chkdsk_frag", "font_cache", "dns_cache"}
 
 # Matched as substrings of the lower-cased path.
 PROTECTED_TOKENS = (

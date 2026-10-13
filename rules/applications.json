@@ -1,0 +1,926 @@
+{
+ "rules": [
+  {
+   "id": "chrome_cache",
+   "category": "Chrome Browser",
+   "label": "Page & asset cache",
+   "tab": "apps",
+   "risk": "safe",
+   "paths": [
+    "%LOCALAPPDATA%\\Google\\Chrome\\User Data\\*\\Cache",
+    "%LOCALAPPDATA%\\Google\\Chrome\\User Data\\*\\Code Cache",
+    "%LOCALAPPDATA%\\Google\\Chrome\\User Data\\*\\GPUCache",
+    "%LOCALAPPDATA%\\Google\\Chrome\\User Data\\*\\Service Worker\\CacheStorage"
+   ],
+   "requires_closed": [
+    "chrome.exe"
+   ],
+   "note": "Temporary web files the browser rebuilds as you browse. Pages may load a little slower the first time afterwards.",
+   "quarantine": false
+  },
+  {
+   "id": "chrome_cookies",
+   "category": "Chrome Browser",
+   "label": "Cookies & site data",
+   "tab": "apps",
+   "risk": "review",
+   "paths": [
+    "%LOCALAPPDATA%\\Google\\Chrome\\User Data\\*",
+    "%LOCALAPPDATA%\\Google\\Chrome\\User Data\\*\\Network"
+   ],
+   "include": [
+    "Cookies",
+    "Cookies-journal"
+   ],
+   "recursive": false,
+   "requires_closed": [
+    "chrome.exe"
+   ],
+   "note": "Signs you out of websites and resets site preferences. Removed files go to quarantine, so you can restore them."
+  },
+  {
+   "id": "chrome_history",
+   "category": "Chrome Browser",
+   "label": "Browsing trail",
+   "tab": "apps",
+   "risk": "review",
+   "paths": [
+    "%LOCALAPPDATA%\\Google\\Chrome\\User Data\\*"
+   ],
+   "include": [
+    "History",
+    "History-journal",
+    "Visited Links",
+    "Top Sites",
+    "Top Sites-journal",
+    "Favicons",
+    "Favicons-journal"
+   ],
+   "recursive": false,
+   "requires_closed": [
+    "chrome.exe"
+   ],
+   "note": "Clears the visited-pages list and top-site thumbnails. Bookmarks are not touched. Restorable from quarantine."
+  },
+  {
+   "id": "chrome_session",
+   "category": "Chrome Browser",
+   "label": "Last-session tabs",
+   "tab": "apps",
+   "risk": "review",
+   "paths": [
+    "%LOCALAPPDATA%\\Google\\Chrome\\User Data\\*",
+    "%LOCALAPPDATA%\\Google\\Chrome\\User Data\\*\\Sessions"
+   ],
+   "include": [
+    "Current Session",
+    "Current Tabs",
+    "Last Session",
+    "Last Tabs",
+    "Session_*",
+    "Tabs_*"
+   ],
+   "recursive": false,
+   "requires_closed": [
+    "chrome.exe"
+   ],
+   "note": "Forgets the tabs from your last session, so 'restore previous tabs' will have nothing to bring back."
+  },
+  {
+   "id": "chrome_forms",
+   "category": "Chrome Browser",
+   "label": "Autofill profiles",
+   "tab": "apps",
+   "risk": "advanced",
+   "paths": [
+    "%LOCALAPPDATA%\\Google\\Chrome\\User Data\\*"
+   ],
+   "include": [
+    "Web Data",
+    "Web Data-journal"
+   ],
+   "recursive": false,
+   "requires_closed": [
+    "chrome.exe"
+   ],
+   "note": "Removes saved autofill entries (names, addresses, cards saved in the browser). Restorable from quarantine."
+  },
+  {
+   "id": "chrome_logins",
+   "category": "Chrome Browser",
+   "label": "Stored sign-ins",
+   "tab": "apps",
+   "risk": "advanced",
+   "paths": [
+    "%LOCALAPPDATA%\\Google\\Chrome\\User Data\\*"
+   ],
+   "include": [
+    "Login Data",
+    "Login Data-journal",
+    "Login Data For Account",
+    "Login Data For Account-journal"
+   ],
+   "recursive": false,
+   "requires_closed": [
+    "chrome.exe"
+   ],
+   "note": "Removes passwords saved in this browser, so you must sign in again. Restorable from quarantine. Passwords synced to an account can return on the next sync."
+  },
+  {
+   "id": "brave_cache",
+   "category": "Brave Browser",
+   "label": "Page & asset cache",
+   "tab": "apps",
+   "risk": "safe",
+   "paths": [
+    "%LOCALAPPDATA%\\BraveSoftware\\Brave-Browser\\User Data\\*\\Cache",
+    "%LOCALAPPDATA%\\BraveSoftware\\Brave-Browser\\User Data\\*\\Code Cache",
+    "%LOCALAPPDATA%\\BraveSoftware\\Brave-Browser\\User Data\\*\\GPUCache",
+    "%LOCALAPPDATA%\\BraveSoftware\\Brave-Browser\\User Data\\*\\Service Worker\\CacheStorage"
+   ],
+   "requires_closed": [
+    "brave.exe"
+   ],
+   "note": "Temporary web files the browser rebuilds as you browse. Pages may load a little slower the first time afterwards.",
+   "quarantine": false
+  },
+  {
+   "id": "brave_cookies",
+   "category": "Brave Browser",
+   "label": "Cookies & site data",
+   "tab": "apps",
+   "risk": "review",
+   "paths": [
+    "%LOCALAPPDATA%\\BraveSoftware\\Brave-Browser\\User Data\\*",
+    "%LOCALAPPDATA%\\BraveSoftware\\Brave-Browser\\User Data\\*\\Network"
+   ],
+   "include": [
+    "Cookies",
+    "Cookies-journal"
+   ],
+   "recursive": false,
+   "requires_closed": [
+    "brave.exe"
+   ],
+   "note": "Signs you out of websites and resets site preferences. Removed files go to quarantine, so you can restore them."
+  },
+  {
+   "id": "brave_history",
+   "category": "Brave Browser",
+   "label": "Browsing trail",
+   "tab": "apps",
+   "risk": "review",
+   "paths": [
+    "%LOCALAPPDATA%\\BraveSoftware\\Brave-Browser\\User Data\\*"
+   ],
+   "include": [
+    "History",
+    "History-journal",
+    "Visited Links",
+    "Top Sites",
+    "Top Sites-journal",
+    "Favicons",
+    "Favicons-journal"
+   ],
+   "recursive": false,
+   "requires_closed": [
+    "brave.exe"
+   ],
+   "note": "Clears the visited-pages list and top-site thumbnails. Bookmarks are not touched. Restorable from quarantine."
+  },
+  {
+   "id": "brave_session",
+   "category": "Brave Browser",
+   "label": "Last-session tabs",
+   "tab": "apps",
+   "risk": "review",
+   "paths": [
+    "%LOCALAPPDATA%\\BraveSoftware\\Brave-Browser\\User Data\\*",
+    "%LOCALAPPDATA%\\BraveSoftware\\Brave-Browser\\User Data\\*\\Sessions"
+   ],
+   "include": [
+    "Current Session",
+    "Current Tabs",
+    "Last Session",
+    "Last Tabs",
+    "Session_*",
+    "Tabs_*"
+   ],
+   "recursive": false,
+   "requires_closed": [
+    "brave.exe"
+   ],
+   "note": "Forgets the tabs from your last session, so 'restore previous tabs' will have nothing to bring back."
+  },
+  {
+   "id": "brave_forms",
+   "category": "Brave Browser",
+   "label": "Autofill profiles",
+   "tab": "apps",
+   "risk": "advanced",
+   "paths": [
+    "%LOCALAPPDATA%\\BraveSoftware\\Brave-Browser\\User Data\\*"
+   ],
+   "include": [
+    "Web Data",
+    "Web Data-journal"
+   ],
+   "recursive": false,
+   "requires_closed": [
+    "brave.exe"
+   ],
+   "note": "Removes saved autofill entries (names, addresses, cards saved in the browser). Restorable from quarantine."
+  },
+  {
+   "id": "brave_logins",
+   "category": "Brave Browser",
+   "label": "Stored sign-ins",
+   "tab": "apps",
+   "risk": "advanced",
+   "paths": [
+    "%LOCALAPPDATA%\\BraveSoftware\\Brave-Browser\\User Data\\*"
+   ],
+   "include": [
+    "Login Data",
+    "Login Data-journal",
+    "Login Data For Account",
+    "Login Data For Account-journal"
+   ],
+   "recursive": false,
+   "requires_closed": [
+    "brave.exe"
+   ],
+   "note": "Removes passwords saved in this browser, so you must sign in again. Restorable from quarantine. Passwords synced to an account can return on the next sync."
+  },
+  {
+   "id": "vivaldi_cache",
+   "category": "Vivaldi Browser",
+   "label": "Page & asset cache",
+   "tab": "apps",
+   "risk": "safe",
+   "paths": [
+    "%LOCALAPPDATA%\\Vivaldi\\User Data\\*\\Cache",
+    "%LOCALAPPDATA%\\Vivaldi\\User Data\\*\\Code Cache",
+    "%LOCALAPPDATA%\\Vivaldi\\User Data\\*\\GPUCache",
+    "%LOCALAPPDATA%\\Vivaldi\\User Data\\*\\Service Worker\\CacheStorage"
+   ],
+   "requires_closed": [
+    "vivaldi.exe"
+   ],
+   "note": "Temporary web files the browser rebuilds as you browse. Pages may load a little slower the first time afterwards.",
+   "quarantine": false
+  },
+  {
+   "id": "vivaldi_cookies",
+   "category": "Vivaldi Browser",
+   "label": "Cookies & site data",
+   "tab": "apps",
+   "risk": "review",
+   "paths": [
+    "%LOCALAPPDATA%\\Vivaldi\\User Data\\*",
+    "%LOCALAPPDATA%\\Vivaldi\\User Data\\*\\Network"
+   ],
+   "include": [
+    "Cookies",
+    "Cookies-journal"
+   ],
+   "recursive": false,
+   "requires_closed": [
+    "vivaldi.exe"
+   ],
+   "note": "Signs you out of websites and resets site preferences. Removed files go to quarantine, so you can restore them."
+  },
+  {
+   "id": "vivaldi_history",
+   "category": "Vivaldi Browser",
+   "label": "Browsing trail",
+   "tab": "apps",
+   "risk": "review",
+   "paths": [
+    "%LOCALAPPDATA%\\Vivaldi\\User Data\\*"
+   ],
+   "include": [
+    "History",
+    "History-journal",
+    "Visited Links",
+    "Top Sites",
+    "Top Sites-journal",
+    "Favicons",
+    "Favicons-journal"
+   ],
+   "recursive": false,
+   "requires_closed": [
+    "vivaldi.exe"
+   ],
+   "note": "Clears the visited-pages list and top-site thumbnails. Bookmarks are not touched. Restorable from quarantine."
+  },
+  {
+   "id": "vivaldi_session",
+   "category": "Vivaldi Browser",
+   "label": "Last-session tabs",
+   "tab": "apps",
+   "risk": "review",
+   "paths": [
+    "%LOCALAPPDATA%\\Vivaldi\\User Data\\*",
+    "%LOCALAPPDATA%\\Vivaldi\\User Data\\*\\Sessions"
+   ],
+   "include": [
+    "Current Session",
+    "Current Tabs",
+    "Last Session",
+    "Last Tabs",
+    "Session_*",
+    "Tabs_*"
+   ],
+   "recursive": false,
+   "requires_closed": [
+    "vivaldi.exe"
+   ],
+   "note": "Forgets the tabs from your last session, so 'restore previous tabs' will have nothing to bring back."
+  },
+  {
+   "id": "vivaldi_forms",
+   "category": "Vivaldi Browser",
+   "label": "Autofill profiles",
+   "tab": "apps",
+   "risk": "advanced",
+   "paths": [
+    "%LOCALAPPDATA%\\Vivaldi\\User Data\\*"
+   ],
+   "include": [
+    "Web Data",
+    "Web Data-journal"
+   ],
+   "recursive": false,
+   "requires_closed": [
+    "vivaldi.exe"
+   ],
+   "note": "Removes saved autofill entries (names, addresses, cards saved in the browser). Restorable from quarantine."
+  },
+  {
+   "id": "vivaldi_logins",
+   "category": "Vivaldi Browser",
+   "label": "Stored sign-ins",
+   "tab": "apps",
+   "risk": "advanced",
+   "paths": [
+    "%LOCALAPPDATA%\\Vivaldi\\User Data\\*"
+   ],
+   "include": [
+    "Login Data",
+    "Login Data-journal",
+    "Login Data For Account",
+    "Login Data For Account-journal"
+   ],
+   "recursive": false,
+   "requires_closed": [
+    "vivaldi.exe"
+   ],
+   "note": "Removes passwords saved in this browser, so you must sign in again. Restorable from quarantine. Passwords synced to an account can return on the next sync."
+  },
+  {
+   "id": "opera_cache",
+   "category": "Opera Browser",
+   "label": "Page & asset cache",
+   "tab": "apps",
+   "risk": "safe",
+   "paths": [
+    "%LOCALAPPDATA%\\Opera Software\\Opera Stable\\Cache",
+    "%LOCALAPPDATA%\\Opera Software\\Opera Stable\\Code Cache",
+    "%LOCALAPPDATA%\\Opera Software\\Opera Stable\\GPUCache",
+    "%LOCALAPPDATA%\\Opera Software\\Opera Stable\\Service Worker\\CacheStorage",
+    "%LOCALAPPDATA%\\Opera Software\\Opera Stable\\Default\\Cache",
+    "%LOCALAPPDATA%\\Opera Software\\Opera Stable\\Default\\Code Cache",
+    "%LOCALAPPDATA%\\Opera Software\\Opera Stable\\Default\\GPUCache",
+    "%LOCALAPPDATA%\\Opera Software\\Opera Stable\\Default\\Service Worker\\CacheStorage"
+   ],
+   "requires_closed": [
+    "opera.exe"
+   ],
+   "note": "Temporary web files the browser rebuilds as you browse. Pages may load a little slower the first time afterwards.",
+   "quarantine": false
+  },
+  {
+   "id": "opera_cookies",
+   "category": "Opera Browser",
+   "label": "Cookies & site data",
+   "tab": "apps",
+   "risk": "review",
+   "paths": [
+    "%APPDATA%\\Opera Software\\Opera Stable",
+    "%APPDATA%\\Opera Software\\Opera Stable\\Network",
+    "%APPDATA%\\Opera Software\\Opera Stable\\Default",
+    "%APPDATA%\\Opera Software\\Opera Stable\\Default\\Network"
+   ],
+   "include": [
+    "Cookies",
+    "Cookies-journal"
+   ],
+   "recursive": false,
+   "requires_closed": [
+    "opera.exe"
+   ],
+   "note": "Signs you out of websites and resets site preferences. Removed files go to quarantine, so you can restore them."
+  },
+  {
+   "id": "opera_history",
+   "category": "Opera Browser",
+   "label": "Browsing trail",
+   "tab": "apps",
+   "risk": "review",
+   "paths": [
+    "%APPDATA%\\Opera Software\\Opera Stable",
+    "%APPDATA%\\Opera Software\\Opera Stable\\Default"
+   ],
+   "include": [
+    "History",
+    "History-journal",
+    "Visited Links",
+    "Top Sites",
+    "Top Sites-journal",
+    "Favicons",
+    "Favicons-journal"
+   ],
+   "recursive": false,
+   "requires_closed": [
+    "opera.exe"
+   ],
+   "note": "Clears the visited-pages list and top-site thumbnails. Bookmarks are not touched. Restorable from quarantine."
+  },
+  {
+   "id": "opera_session",
+   "category": "Opera Browser",
+   "label": "Last-session tabs",
+   "tab": "apps",
+   "risk": "review",
+   "paths": [
+    "%APPDATA%\\Opera Software\\Opera Stable",
+    "%APPDATA%\\Opera Software\\Opera Stable\\Sessions",
+    "%APPDATA%\\Opera Software\\Opera Stable\\Default",
+    "%APPDATA%\\Opera Software\\Opera Stable\\Default\\Sessions"
+   ],
+   "include": [
+    "Current Session",
+    "Current Tabs",
+    "Last Session",
+    "Last Tabs",
+    "Session_*",
+    "Tabs_*"
+   ],
+   "recursive": false,
+   "requires_closed": [
+    "opera.exe"
+   ],
+   "note": "Forgets the tabs from your last session, so 'restore previous tabs' will have nothing to bring back."
+  },
+  {
+   "id": "opera_forms",
+   "category": "Opera Browser",
+   "label": "Autofill profiles",
+   "tab": "apps",
+   "risk": "advanced",
+   "paths": [
+    "%APPDATA%\\Opera Software\\Opera Stable",
+    "%APPDATA%\\Opera Software\\Opera Stable\\Default"
+   ],
+   "include": [
+    "Web Data",
+    "Web Data-journal"
+   ],
+   "recursive": false,
+   "requires_closed": [
+    "opera.exe"
+   ],
+   "note": "Removes saved autofill entries (names, addresses, cards saved in the browser). Restorable from quarantine."
+  },
+  {
+   "id": "opera_logins",
+   "category": "Opera Browser",
+   "label": "Stored sign-ins",
+   "tab": "apps",
+   "risk": "advanced",
+   "paths": [
+    "%APPDATA%\\Opera Software\\Opera Stable",
+    "%APPDATA%\\Opera Software\\Opera Stable\\Default"
+   ],
+   "include": [
+    "Login Data",
+    "Login Data-journal",
+    "Login Data For Account",
+    "Login Data For Account-journal"
+   ],
+   "recursive": false,
+   "requires_closed": [
+    "opera.exe"
+   ],
+   "note": "Removes passwords saved in this browser, so you must sign in again. Restorable from quarantine. Passwords synced to an account can return on the next sync."
+  },
+  {
+   "id": "firefox_cache",
+   "category": "Firefox Browser",
+   "label": "Page & asset cache",
+   "tab": "apps",
+   "risk": "safe",
+   "paths": [
+    "%LOCALAPPDATA%\\Mozilla\\Firefox\\Profiles\\*\\cache2",
+    "%LOCALAPPDATA%\\Mozilla\\Firefox\\Profiles\\*\\startupCache",
+    "%LOCALAPPDATA%\\Mozilla\\Firefox\\Profiles\\*\\thumbnails"
+   ],
+   "requires_closed": [
+    "firefox.exe"
+   ],
+   "note": "Temporary web files the browser rebuilds as you browse. Pages may load a little slower the first time afterwards.",
+   "quarantine": false
+  },
+  {
+   "id": "firefox_cookies",
+   "category": "Firefox Browser",
+   "label": "Cookies & site data",
+   "tab": "apps",
+   "risk": "review",
+   "paths": [
+    "%APPDATA%\\Mozilla\\Firefox\\Profiles\\*"
+   ],
+   "include": [
+    "cookies.sqlite",
+    "cookies.sqlite-wal",
+    "cookies.sqlite-shm"
+   ],
+   "recursive": false,
+   "requires_closed": [
+    "firefox.exe"
+   ],
+   "note": "Signs you out of websites and resets site preferences. Removed files go to quarantine, so you can restore them."
+  },
+  {
+   "id": "firefox_session",
+   "category": "Firefox Browser",
+   "label": "Last-session tabs",
+   "tab": "apps",
+   "risk": "review",
+   "paths": [
+    "%APPDATA%\\Mozilla\\Firefox\\Profiles\\*",
+    "%APPDATA%\\Mozilla\\Firefox\\Profiles\\*\\sessionstore-backups"
+   ],
+   "include": [
+    "sessionstore.jsonlz4",
+    "recovery.jsonlz4",
+    "recovery.baklz4",
+    "previous.jsonlz4",
+    "upgrade.jsonlz4-*"
+   ],
+   "recursive": false,
+   "requires_closed": [
+    "firefox.exe"
+   ],
+   "note": "Forgets the tabs from your last session, so 'restore previous tabs' will have nothing to bring back."
+  },
+  {
+   "id": "firefox_forms",
+   "category": "Firefox Browser",
+   "label": "Autofill profiles",
+   "tab": "apps",
+   "risk": "advanced",
+   "paths": [
+    "%APPDATA%\\Mozilla\\Firefox\\Profiles\\*"
+   ],
+   "include": [
+    "formhistory.sqlite",
+    "formhistory.sqlite-wal",
+    "formhistory.sqlite-shm"
+   ],
+   "recursive": false,
+   "requires_closed": [
+    "firefox.exe"
+   ],
+   "note": "Removes saved autofill entries (names, addresses, cards saved in the browser). Restorable from quarantine."
+  },
+  {
+   "id": "firefox_logins",
+   "category": "Firefox Browser",
+   "label": "Stored sign-ins",
+   "tab": "apps",
+   "risk": "advanced",
+   "paths": [
+    "%APPDATA%\\Mozilla\\Firefox\\Profiles\\*"
+   ],
+   "include": [
+    "logins.json",
+    "key4.db",
+    "logins-backup.json"
+   ],
+   "recursive": false,
+   "requires_closed": [
+    "firefox.exe"
+   ],
+   "note": "Removes passwords saved in this browser, so you must sign in again. Restorable from quarantine. Passwords synced to an account can return on the next sync."
+  },
+  {
+   "id": "office_cache",
+   "category": "Office & Documents",
+   "label": "Office document cache",
+   "tab": "apps",
+   "risk": "safe",
+   "paths": [
+    "%LOCALAPPDATA%\\Microsoft\\Office\\16.0\\OfficeFileCache"
+   ],
+   "requires_closed": [
+    "winword.exe",
+    "excel.exe",
+    "powerpnt.exe"
+   ],
+   "note": "Temporary copies Office keeps of cloud documents.",
+   "quarantine": false
+  },
+  {
+   "id": "office_recent",
+   "category": "Office & Documents",
+   "label": "Office recent-file shortcuts",
+   "tab": "apps",
+   "risk": "safe",
+   "paths": [
+    "%APPDATA%\\Microsoft\\Office\\Recent"
+   ],
+   "include": [
+    "*.lnk"
+   ],
+   "recursive": false,
+   "note": "The shortcuts behind Office's recent lists. Your documents are not touched.",
+   "quarantine": false
+  },
+  {
+   "id": "spotify_cache",
+   "category": "Media & Creative",
+   "label": "Streaming-music cache",
+   "tab": "apps",
+   "risk": "safe",
+   "paths": [
+    "%LOCALAPPDATA%\\Spotify\\Data",
+    "%LOCALAPPDATA%\\Spotify\\Storage"
+   ],
+   "requires_closed": [
+    "spotify.exe"
+   ],
+   "note": "Songs Spotify cached for offline-like playback. Downloads you made are kept in other files.",
+   "quarantine": false
+  },
+  {
+   "id": "vlc_art",
+   "category": "Media & Creative",
+   "label": "Player artwork cache",
+   "tab": "apps",
+   "risk": "safe",
+   "paths": [
+    "%APPDATA%\\vlc\\art"
+   ],
+   "note": "Album art VLC downloaded.",
+   "quarantine": false
+  },
+  {
+   "id": "adobe_media",
+   "category": "Media & Creative",
+   "label": "Adobe media cache",
+   "tab": "apps",
+   "risk": "safe",
+   "paths": [
+    "%APPDATA%\\Adobe\\Common\\Media Cache Files",
+    "%APPDATA%\\Adobe\\Common\\Media Cache",
+    "%APPDATA%\\Adobe\\Common\\Peak Files"
+   ],
+   "note": "Previews and conformed audio Premiere and After Effects rebuild.",
+   "quarantine": false
+  },
+  {
+   "id": "discord_cache",
+   "category": "Chat & Social",
+   "label": "Chat app cache",
+   "tab": "apps",
+   "risk": "safe",
+   "paths": [
+    "%APPDATA%\\discord\\Cache",
+    "%APPDATA%\\discord\\Code Cache",
+    "%APPDATA%\\discord\\GPUCache"
+   ],
+   "requires_closed": [
+    "discord.exe"
+   ],
+   "note": "Images and scripts Discord rebuilds.",
+   "quarantine": false
+  },
+  {
+   "id": "telegram_cache",
+   "category": "Chat & Social",
+   "label": "Messenger media cache",
+   "tab": "apps",
+   "risk": "safe",
+   "paths": [
+    "%APPDATA%\\Telegram Desktop\\tdata\\user_data\\cache",
+    "%APPDATA%\\Telegram Desktop\\tdata\\user_data\\media_cache"
+   ],
+   "requires_closed": [
+    "telegram.exe"
+   ],
+   "note": "Downloaded media Telegram can fetch again.",
+   "quarantine": false
+  },
+  {
+   "id": "steam_web",
+   "category": "Gaming Platforms",
+   "label": "Store & overlay cache",
+   "tab": "apps",
+   "risk": "safe",
+   "paths": [
+    "%LOCALAPPDATA%\\Steam\\htmlcache"
+   ],
+   "requires_closed": [
+    "steam.exe",
+    "steamwebhelper.exe"
+   ],
+   "note": "Web content shown inside Steam. Rebuilt on launch.",
+   "quarantine": false
+  },
+  {
+   "id": "epic_web",
+   "category": "Gaming Platforms",
+   "label": "Launcher web cache",
+   "tab": "apps",
+   "risk": "safe",
+   "paths": [
+    "%LOCALAPPDATA%\\EpicGamesLauncher\\Saved\\webcache*",
+    "%LOCALAPPDATA%\\EpicGamesLauncher\\Saved\\Logs"
+   ],
+   "requires_closed": [
+    "epicgameslauncher.exe"
+   ],
+   "note": "Web content and logs of the Epic launcher.",
+   "quarantine": false
+  },
+  {
+   "id": "npm_cache",
+   "category": "Developer Tools",
+   "label": "npm package cache",
+   "tab": "apps",
+   "risk": "review",
+   "paths": [
+    "%LOCALAPPDATA%\\npm-cache",
+    "%APPDATA%\\npm-cache"
+   ],
+   "note": "Packages are re-downloaded when needed.",
+   "quarantine": false
+  },
+  {
+   "id": "pip_cache",
+   "category": "Developer Tools",
+   "label": "pip wheel cache",
+   "tab": "apps",
+   "risk": "review",
+   "paths": [
+    "%LOCALAPPDATA%\\pip\\Cache"
+   ],
+   "note": "Python packages are re-downloaded when needed.",
+   "quarantine": false
+  },
+  {
+   "id": "nuget_cache",
+   "category": "Developer Tools",
+   "label": "NuGet HTTP cache",
+   "tab": "apps",
+   "risk": "review",
+   "paths": [
+    "%LOCALAPPDATA%\\NuGet\\v3-cache",
+    "%LOCALAPPDATA%\\NuGet\\plugins-cache"
+   ],
+   "quarantine": false
+  },
+  {
+   "id": "gradle_cache",
+   "category": "Developer Tools",
+   "label": "Gradle caches",
+   "tab": "apps",
+   "risk": "review",
+   "paths": [
+    "%USERPROFILE%\\.gradle\\caches"
+   ],
+   "requires_closed": [
+    "java.exe"
+   ],
+   "note": "Dependencies are re-downloaded on the next build.",
+   "quarantine": false
+  },
+  {
+   "id": "maven_repo",
+   "category": "Developer Tools",
+   "label": "Maven local repository",
+   "tab": "apps",
+   "risk": "review",
+   "paths": [
+    "%USERPROFILE%\\.m2\\repository"
+   ],
+   "note": "Dependencies are re-downloaded on the next build.",
+   "quarantine": false
+  },
+  {
+   "id": "android_build_cache",
+   "category": "Developer Tools",
+   "label": "Android build cache",
+   "tab": "apps",
+   "risk": "review",
+   "paths": [
+    "%USERPROFILE%\\.android\\build-cache",
+    "%USERPROFILE%\\.android\\cache"
+   ],
+   "quarantine": false
+  },
+  {
+   "id": "vscode_cache",
+   "category": "Developer Tools",
+   "label": "Code editor caches",
+   "tab": "apps",
+   "risk": "safe",
+   "paths": [
+    "%APPDATA%\\Code\\Cache",
+    "%APPDATA%\\Code\\CachedData",
+    "%APPDATA%\\Code\\Code Cache",
+    "%APPDATA%\\Code\\GPUCache"
+   ],
+   "requires_closed": [
+    "code.exe"
+   ],
+   "note": "VS Code rebuilds these. Settings and extensions are untouched.",
+   "quarantine": false
+  },
+  {
+   "id": "jetbrains_cache",
+   "category": "Developer Tools",
+   "label": "JetBrains IDE caches",
+   "tab": "apps",
+   "risk": "review",
+   "paths": [
+    "%LOCALAPPDATA%\\JetBrains\\*\\caches"
+   ],
+   "requires_closed": [
+    "idea64.exe",
+    "pycharm64.exe",
+    "webstorm64.exe",
+    "rider64.exe"
+   ],
+   "note": "Indexes the IDE rebuilds; the next start re-indexes your projects and can take a while.",
+   "quarantine": false
+  },
+  {
+   "id": "vs_cache",
+   "category": "Developer Tools",
+   "label": "Visual Studio component cache",
+   "tab": "apps",
+   "risk": "safe",
+   "paths": [
+    "%LOCALAPPDATA%\\Microsoft\\VisualStudio\\*\\ComponentModelCache"
+   ],
+   "requires_closed": [
+    "devenv.exe"
+   ],
+   "note": "Rebuilt the next time Visual Studio starts.",
+   "quarantine": false
+  },
+  {
+   "id": "pycache",
+   "category": "Developer Tools",
+   "label": "Python bytecode caches",
+   "tab": "apps",
+   "risk": "safe",
+   "paths": [
+    "%USERPROFILE%\\source",
+    "%USERPROFILE%\\projects",
+    "%USERPROFILE%\\dev",
+    "%USERPROFILE%\\code",
+    "%USERPROFILE%\\Documents\\GitHub"
+   ],
+   "include": [
+    "*.pyc",
+    "*.pyo"
+   ],
+   "note": "Compiled Python files created next to your code.",
+   "dir_name": "__pycache__",
+   "quarantine": false
+  },
+  {
+   "id": "old_installers",
+   "category": "Utilities & Installers",
+   "label": "Old installers in Downloads",
+   "tab": "apps",
+   "risk": "review",
+   "paths": [
+    "%USERPROFILE%\\Downloads"
+   ],
+   "include": [
+    "*.exe",
+    "*.msi",
+    "*.msix",
+    "*.iso"
+   ],
+   "recursive": false,
+   "min_age_days": 60,
+   "note": "Setup files older than 60 days. Moved to quarantine, so you can restore them for 7 days."
+  }
+ ]
+}
