@@ -1018,7 +1018,7 @@ class SettingsPage(Page):
         label(about.body, "Copyright (C) Lavati Softwares. No data leaves your PC.", 9, fg=theme.MUTED).pack(anchor="w", pady=(2, 10))
         ab = tk.Frame(about.body, bg=theme.CARD)
         ab.pack(anchor="w")
-        for text, fname in (("License agreement", "LICENSE.txt"), ("Privacy", "PRIVACY.md"),
+        for text, fname in (("License (MIT)", "LICENSE.txt"), ("Privacy", "PRIVACY.md"),
                             ("Security model", "SECURITY.md"), ("Third-party notices", "THIRD_PARTY_NOTICES.txt")):
             Btn(ab, text, lambda f=fname: winapi.open_file(os.path.join(app_root(), f)), "ghost", height=34, padx=16
                 ).pack(side="left", padx=(0, 8))

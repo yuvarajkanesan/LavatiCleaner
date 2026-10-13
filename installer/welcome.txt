@@ -6,4 +6,4 @@ There is no registry cleaner, on purpose. It carries real risk for almost no ben
 
 If Lavati Cleaner is already installed, this setup updates it and keeps your settings and history.
 
-Lavati Cleaner is free for everyone, personal and commercial use, with no registration.
+Lavati Cleaner is free and open source (MIT license), for personal and commercial use, with no registration.
