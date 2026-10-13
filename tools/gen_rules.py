@@ -18,7 +18,7 @@ rules = []
 
 
 def add(id, category, label, tab, paths, risk="safe", include=None, recursive=None, closed=None, admin=False,
-        age=0, note="", action=None, dir_name=None, quarantine=None):
+        age=0, note="", action=None, dir_name=None, quarantine=None, prune=False):
     r = {"id": id, "category": category, "label": label, "tab": tab, "risk": risk, "paths": paths}
     if include:
         r["include"] = include
@@ -38,6 +38,8 @@ def add(id, category, label, tab, paths, risk="safe", include=None, recursive=No
         r["dir_name"] = dir_name
     if quarantine is not None:
         r["quarantine"] = quarantine
+    if prune:
+        r["prune_empty"] = True
     rules.append(r)
 
 
@@ -127,9 +129,9 @@ add("thumbnails", G, "Thumbnail & icon cache", "windows", [f"{LA}\\Microsoft\\Wi
 G = "Windows Housekeeping"
 add("recycle_bin", G, "Recycle Bin", "windows", [], action="recycle_bin",
     note="Empties the Recycle Bin on every drive. Its files cannot be restored afterwards.")
-add("user_temp", G, "Personal temp files", "windows", ["%TEMP%"], age=1, quarantine=False,
+add("user_temp", G, "Personal temp files", "windows", ["%TEMP%"], age=1, quarantine=False, prune=True,
     note="Leftovers programs create in your temp folder. Files from the last day are left alone.")
-add("windows_temp", G, "System temp files", "windows", ["%SystemRoot%\\Temp"], age=1, quarantine=False,
+add("windows_temp", G, "System temp files", "windows", ["%SystemRoot%\\Temp"], age=1, quarantine=False, prune=True,
     note="Files you cannot delete without administrator rights are skipped, never forced.")
 add("clipboard", G, "Clipboard contents", "windows", [], action="clipboard",
     note="Clears whatever you last copied. Handy after copying a password.")

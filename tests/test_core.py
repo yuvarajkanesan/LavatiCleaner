@@ -169,6 +169,69 @@ class ExecTest(Base):
         self.assertEqual(len(os.listdir(self.root)), 5)
 
 
+class TempCleanTest(Base):
+    def _old(self, path, days=3):
+        t = time.time() - days * 86400
+        os.utime(path, (t, t))
+
+    def _age_dirs(self):
+        for r, ds, _fs in os.walk(self.root, topdown=False):
+            for d in ds:
+                self._old(os.path.join(r, d))
+
+    def test_empty_folders_are_removed_but_root_stays(self):
+        write(os.path.join(self.root, "a", "b", "c", "old.tmp"))
+        os.makedirs(os.path.join(self.root, "x", "y", "z"))              # already empty
+        os.makedirs(os.path.join(self.root, "m", "n"))
+        write(os.path.join(self.root, "m", "n", "old2.tmp"))
+        for r, _d, fs in os.walk(self.root):
+            for f in fs:
+                self._old(os.path.join(r, f))
+        self._age_dirs()
+        rule = self.rule(min_age_days=1, prune_empty=True, quarantine=False)
+        res = scan_rule(rule, self.ctx)
+        ex, _ = self.make_exec(rule)
+        rep = ex.run(res.items, dry_run=False)
+        self.assertEqual(rep.skipped_count, 0)
+        self.assertEqual(os.listdir(self.root), [])                      # everything gone, root kept
+        self.assertTrue(os.path.isdir(self.root))
+
+    def test_recent_files_and_their_folders_are_kept_and_counted(self):
+        write(os.path.join(self.root, "keep", "fresh.tmp"))              # new: must survive
+        write(os.path.join(self.root, "gone", "old.tmp"))
+        self._old(os.path.join(self.root, "gone", "old.tmp"))
+        self._age_dirs()
+        rule = self.rule(min_age_days=1, prune_empty=True, quarantine=False)
+        res = scan_rule(rule, self.ctx)
+        self.assertEqual(res.young, 1)
+        ex, _ = self.make_exec(rule)
+        ex.run(res.items, dry_run=False)
+        self.assertTrue(os.path.exists(os.path.join(self.root, "keep", "fresh.tmp")))
+        self.assertFalse(os.path.exists(os.path.join(self.root, "gone")))
+
+    @unittest.skipUnless(os.name == "nt", "file locking semantics are Windows-specific")
+    def test_folder_with_a_locked_file_is_left_quietly(self):
+        locked = os.path.join(self.root, "busy", "lock.tmp")
+        write(locked)
+        write(os.path.join(self.root, "busy", "free.tmp"))
+        for f in (locked, os.path.join(self.root, "busy", "free.tmp")):
+            self._old(f)
+        self._age_dirs()
+        rule = self.rule(min_age_days=1, prune_empty=True, quarantine=False)
+        res = scan_rule(rule, self.ctx)
+        ex, _ = self.make_exec(rule)
+        with open(locked, "rb"):
+            rep = ex.run(res.items, dry_run=False)
+        self.assertTrue(os.path.exists(locked))
+        reasons = [s.reason for s in rep.skipped]
+        self.assertEqual(reasons, ["File in use by another program"])    # no extra "directory not empty" noise
+
+    def test_prune_is_off_by_default(self):
+        os.makedirs(os.path.join(self.root, "empty"))
+        res = scan_rule(self.rule(), self.ctx)
+        self.assertEqual(res.count, 0)
+
+
 class AnalyzerTest(Base):
     def test_staged_duplicates(self):
         big = b"a" * 5000

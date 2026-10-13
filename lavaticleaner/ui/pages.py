@@ -465,6 +465,10 @@ class CleanerPage(Page):
             label(warn.body, "⚠  Start LavatiCleaner with “Run as administrator” to include this location.", 10,
                   fg=theme.AMBER, bg=theme.WARN_BG, wraplength=270, justify="left", anchor="w").pack(anchor="w", fill="x")
 
+        if res.young:
+            label(d, f"{theme.fmt_count(res.young)} newer files were kept (younger than "
+                     f"{r.min_age_days * 24:g} h). Change this in Settings.", 9, fg=theme.MUTED, wraplength=300,
+                  justify="left", anchor="w").pack(anchor="w", fill="x", pady=(10, 0))
         if res.protected:
             label(d, f"{theme.fmt_count(res.protected)} files were left out because they belong to security or "
                      "management software.", 9, fg=theme.MUTED, wraplength=300, justify="left", anchor="w"
@@ -1016,6 +1020,14 @@ class SettingsPage(Page):
         ttk.Spinbox(row, from_=1, to=90, width=4, textvariable=self.days, command=self._save_days).pack(side="left", padx=10)
         label(row, "days", 10).pack(side="left")
 
+        trow = tk.Frame(b, bg=theme.CARD)
+        trow.pack(anchor="w", pady=(0, 18))
+        label(trow, "Keep temp files newer than", 10).pack(side="left")
+        self.temp_h = tk.IntVar(value=int(app.store.get("temp_min_age_hours", 24)))
+        ttk.Spinbox(trow, from_=0, to=168, width=5, textvariable=self.temp_h, command=self._save_temp
+                    ).pack(side="left", padx=10)
+        label(trow, "hours (0 = clean everything that is not in use)", 10, fg=theme.MUTED).pack(side="left")
+
         label(b, "Appearance", 10, True).pack(anchor="w", pady=(0, 8))
         Segmented(b, [("system", "System"), ("light", "Light"), ("dark", "Dark")], app.theme_mode,
                   app.set_theme).pack(anchor="w", pady=(0, 20))
@@ -1081,6 +1093,13 @@ class SettingsPage(Page):
 
     def _set_dry(self, v):
         self.app.store.set("dry_run_always", bool(v))
+
+    def _save_temp(self):
+        try:
+            h = min(168, max(0, int(self.temp_h.get())))
+        except (tk.TclError, ValueError):
+            return
+        self.app.store.set("temp_min_age_hours", h)
 
     def _save_days(self):
         try:

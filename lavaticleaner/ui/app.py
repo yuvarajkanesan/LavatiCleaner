@@ -191,6 +191,10 @@ class App(tk.Tk):
             self.post(lambda: dlg.update_progress(n, total, res.rule.label))
 
         def work():
+            hours = max(0, int(self.store.get("temp_min_age_hours", 24)))
+            for r in self.rules:
+                if r.id in ("user_temp", "windows_temp"):
+                    r.min_age_days = hours / 24
             running = winapi.running_processes()
             info = winapi.managed_info(running)
             lock = info["managed"] and (bool(self.store.get("protect_managed", True)) or info["policy_lock"])

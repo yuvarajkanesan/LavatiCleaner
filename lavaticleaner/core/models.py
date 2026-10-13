@@ -26,6 +26,7 @@ class Rule:
     quarantine: bool | None = None       # None -> derived from risk
     note: str = ""
     tab: str = "windows"                 # which Cleaner tab lists it: windows | apps
+    prune_empty: bool = False            # also remove folders left empty (temp-style rules)
 
     @property
     def use_quarantine(self) -> bool:
@@ -51,6 +52,7 @@ class RuleResult:
     count: int = 0
     roots: list = field(default_factory=list)
     status: str = "ok"                    # ok | needs_admin | managed | empty
+    young: int = 0                        # files kept because they are newer than the rule's minimum age
     protected: int = 0                    # files left out: they belong to security/management software
     errors: int = 0
     running: list = field(default_factory=list)   # apps that should be closed first

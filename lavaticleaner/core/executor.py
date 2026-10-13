@@ -134,6 +134,8 @@ class Executor:
                         self._prune_empty_parents(item, pruned_dirs)
                     report.by_rule[item.rule_id] = report.by_rule.get(item.rule_id, 0) + item.size
                 except OSError as e:
+                    if stat.S_ISDIR(lst.st_mode) and (getattr(e, "winerror", None) == 145 or e.errno == errno.ENOTEMPTY):
+                        continue          # folder still holds something we could not delete: leave it quietly
                     report.skipped.append(Skipped(item.path, _reason(e), item.size, item.rule_id))
         finally:
             if qrun is not None:

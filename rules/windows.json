@@ -232,7 +232,8 @@
    ],
    "min_age_days": 1,
    "note": "Leftovers programs create in your temp folder. Files from the last day are left alone.",
-   "quarantine": false
+   "quarantine": false,
+   "prune_empty": true
   },
   {
    "id": "windows_temp",
@@ -245,7 +246,8 @@
    ],
    "min_age_days": 1,
    "note": "Files you cannot delete without administrator rights are skipped, never forced.",
-   "quarantine": false
+   "quarantine": false,
+   "prune_empty": true
   },
   {
    "id": "clipboard",

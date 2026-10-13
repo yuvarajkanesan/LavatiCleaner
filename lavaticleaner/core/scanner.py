@@ -52,7 +52,7 @@ def _name_ok(name: str, include, exclude) -> bool:
 
 
 def iter_files(root, *, include=("*",), exclude=(), cutoff=None, recursive=True,
-               skip_dirs=(), cancel=None, errors=None, follow_dirs_named=None):
+               skip_dirs=(), cancel=None, errors=None, young=None):
     """Yield (path, size, mtime). Reparse points are yielded as zero-size entries and never entered."""
     skip = {s.lower() for s in skip_dirs}
     stack = [root]
@@ -85,8 +85,59 @@ def iter_files(root, *, include=("*",), exclude=(), cutoff=None, recursive=True,
                 if not _name_ok(e.name, include, exclude):
                     continue
                 if cutoff is not None and st.st_mtime > cutoff:
+                    if young is not None:
+                        young[0] += 1
                     continue
                 yield e.path, st.st_size, st.st_mtime
+
+
+def find_removable_dirs(root, include, exclude, cutoff, cancel=None):
+    """Folders under `root` (never `root` itself) that will be empty once the rule's files are gone.
+    Deepest first, so removing them in order works. Links are never entered and block removal."""
+    out = []
+
+    def visit(d):
+        if cancel is not None and cancel.is_set():
+            return False
+        try:
+            entries = list(os.scandir(d))
+        except OSError:
+            return False
+        ok = True
+        for e in entries:
+            try:
+                st = e.stat(follow_symlinks=False)
+            except OSError:
+                ok = False
+                continue
+            if is_reparse(st):
+                ok = False
+            elif stat.S_ISDIR(st.st_mode):
+                if not visit(e.path):
+                    ok = False
+            elif not (_name_ok(e.name, include, exclude) and (cutoff is None or st.st_mtime <= cutoff)):
+                ok = False
+        if ok and cutoff is not None:
+            try:
+                ok = os.stat(d).st_mtime <= cutoff       # a brand-new folder may be in use right now
+            except OSError:
+                ok = False
+        if ok:
+            out.append(d)
+        return ok
+
+    try:
+        children = [e.path for e in os.scandir(root) if e.is_dir(follow_symlinks=False)]
+    except OSError:
+        return out
+    for c in children:
+        try:
+            if is_reparse(os.lstat(c)):
+                continue
+        except OSError:
+            continue
+        visit(c)
+    return out
 
 
 def _find_named_dirs(root, name, skip_dirs, cancel):
@@ -143,6 +194,7 @@ def scan_rule(rule: Rule, ctx: ScanContext, cancel=None) -> RuleResult:
 
     cutoff = ctx.now - rule.min_age_days * 86400 if rule.min_age_days else None
     errors = [0]
+    young = [0]
     roots = expand_paths(rule.paths)
     res.roots = roots
     for root in roots:
@@ -161,14 +213,18 @@ def scan_rule(rule: Rule, ctx: ScanContext, cancel=None) -> RuleResult:
             walkers = (
                 (p for found in _find_named_dirs(root, rule.dir_name, rule.skip_dirs, cancel)
                  for p in iter_files(found, include=rule.include, exclude=rule.exclude,
-                                     cutoff=cutoff, recursive=True, cancel=cancel, errors=errors))
+                                     cutoff=cutoff, recursive=True, cancel=cancel, errors=errors, young=young))
             )
         else:
             walkers = iter_files(root, include=rule.include, exclude=rule.exclude, cutoff=cutoff,
-                                 recursive=rule.recursive, skip_dirs=(), cancel=cancel, errors=errors)
+                                 recursive=rule.recursive, skip_dirs=(), cancel=cancel, errors=errors, young=young)
         for path, size, mtime in walkers:
             res.items.append(Item(path, size, mtime, rule.id))
             res.size += size
+        if rule.prune_empty and rule.recursive and not rule.dir_name:
+            for d in find_removable_dirs(root, rule.include, rule.exclude, cutoff, cancel):
+                res.items.append(Item(d, 0, ctx.now, rule.id))      # emptied folders go last, deepest first
+    res.young = young[0]
     res.count = len(res.items)
     res.errors = errors[0]
     if not res.count:
