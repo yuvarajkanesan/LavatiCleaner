@@ -1,0 +1,9 @@
+Lavati Cleaner finds junk files such as temporary files, browser and developer caches, crash dumps, duplicates and large forgotten files, shows you exactly what it found, and removes only what you approve.
+
+Nothing is deleted blindly: every clean starts with a preview, and anything that is not a rebuildable cache goes to a quarantine folder first, so you can undo it for 7 days.
+
+There is no registry cleaner, on purpose. It carries real risk for almost no benefit.
+
+If Lavati Cleaner is already installed, this setup updates it and keeps your settings and history.
+
+Lavati Cleaner is free for everyone, personal and commercial use, with no registration.

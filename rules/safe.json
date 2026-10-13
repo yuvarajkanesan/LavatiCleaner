@@ -1,0 +1,33 @@
+{
+  "rules": [
+    {"id": "user_temp", "category": "System", "label": "User temp files", "risk": "safe",
+     "paths": ["%TEMP%"], "min_age_days": 1, "quarantine": false},
+    {"id": "windows_temp", "category": "System", "label": "Windows temp files", "risk": "safe",
+     "paths": ["%SystemRoot%\\Temp"], "min_age_days": 1, "requires_admin": true, "quarantine": false},
+    {"id": "thumbnails", "category": "System", "label": "Thumbnail cache", "risk": "safe",
+     "paths": ["%LOCALAPPDATA%\\Microsoft\\Windows\\Explorer"], "include": ["thumbcache_*.db", "iconcache_*.db"],
+     "recursive": false, "quarantine": false},
+    {"id": "crash_dumps", "category": "System", "label": "Crash dumps", "risk": "safe",
+     "paths": ["%LOCALAPPDATA%\\CrashDumps", "%SystemRoot%\\Minidump", "%SystemRoot%\\MEMORY.DMP"],
+     "quarantine": false},
+    {"id": "wer", "category": "System", "label": "Windows Error Reporting", "risk": "safe",
+     "paths": ["%LOCALAPPDATA%\\Microsoft\\Windows\\WER", "%ProgramData%\\Microsoft\\Windows\\WER"],
+     "quarantine": false},
+    {"id": "old_logs", "category": "System", "label": "Old Windows logs", "risk": "safe",
+     "paths": ["%SystemRoot%\\Logs\\CBS", "%SystemRoot%\\Logs\\DISM"], "include": ["*.log", "*.cab"],
+     "min_age_days": 30, "requires_admin": true, "quarantine": false},
+    {"id": "recycle_bin", "category": "System", "label": "Recycle Bin", "risk": "safe",
+     "paths": [], "action": "recycle_bin"},
+    {"id": "chrome_cache", "category": "Browsers", "label": "Chrome cache", "risk": "safe",
+     "paths": ["%LOCALAPPDATA%\\Google\\Chrome\\User Data\\*\\Cache", "%LOCALAPPDATA%\\Google\\Chrome\\User Data\\*\\Code Cache",
+               "%LOCALAPPDATA%\\Google\\Chrome\\User Data\\*\\GPUCache"],
+     "requires_closed": ["chrome.exe"], "quarantine": false},
+    {"id": "edge_cache", "category": "Browsers", "label": "Edge cache", "risk": "safe",
+     "paths": ["%LOCALAPPDATA%\\Microsoft\\Edge\\User Data\\*\\Cache", "%LOCALAPPDATA%\\Microsoft\\Edge\\User Data\\*\\Code Cache",
+               "%LOCALAPPDATA%\\Microsoft\\Edge\\User Data\\*\\GPUCache"],
+     "requires_closed": ["msedge.exe"], "quarantine": false},
+    {"id": "firefox_cache", "category": "Browsers", "label": "Firefox cache", "risk": "safe",
+     "paths": ["%LOCALAPPDATA%\\Mozilla\\Firefox\\Profiles\\*\\cache2"],
+     "requires_closed": ["firefox.exe"], "quarantine": false}
+  ]
+}

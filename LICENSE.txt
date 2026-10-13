@@ -1,0 +1,68 @@
+LAVATI CLEANER END USER LICENSE AGREEMENT
+
+Version 1.0
+
+Please read this agreement carefully. By installing or using Lavati Cleaner (the "Software") you agree
+to it. If you do not agree, do not install or use the Software.
+
+1. FREE LICENCE
+Lavati Softwares ("Lavati") grants you a worldwide, royalty-free, non-exclusive licence to install and use
+the Software, free of charge, for personal, educational, commercial and organisational purposes, on any
+number of devices you own or are authorised to administer. No registration or payment is required, now or
+for any later version of the Software that Lavati releases under this agreement. Using the Software on a
+device managed by an organisation requires that organisation's permission.
+
+2. SHARING AND RESTRICTIONS
+You may copy and share the unmodified installer, free of charge, as long as you keep this agreement and
+the notices with it. You may not (a) sell, rent or charge for the Software or bundle it into a paid product,
+(b) modify it and distribute the result under the Lavati name, (c) reverse engineer or decompile it except
+to the extent the law allows despite this restriction, or (d) remove copyright or licence notices. The
+cleaning rules and settings files you create for your own use remain yours.
+
+3. HOW THE SOFTWARE WORKS, AND YOUR RESPONSIBILITY
+The Software finds files that can usually be removed and removes only what you choose, after a preview.
+It is designed to leave security software, system files, Windows event and tracing logs, and
+organisation-managed data alone, and it moves many removed files to a quarantine from which you can
+restore them for a limited time. These safeguards reduce risk but cannot remove it. You are responsible
+for reviewing what you select, for keeping backups of data you value, and for complying with the policies
+of any organisation that manages your device. Files deleted permanently, or whose quarantine period has
+expired, cannot be restored.
+
+4. NO REGISTRY CLEANING, NO TELEMETRY
+The Software does not modify the Windows registry to "clean" it, and it does not send data from your
+device. See PRIVACY.md for what is stored on your device.
+
+5. UPDATES
+Lavati may release new versions. The Software does not update itself; you decide when to install a new
+version.
+
+6. THIRD-PARTY COMPONENTS
+The Software includes third-party components under their own licences, listed in
+THIRD_PARTY_NOTICES.txt. Nothing in this agreement limits your rights under those licences.
+
+7. OWNERSHIP
+The Software is licensed, not sold. Lavati and its licensors retain all rights not expressly granted here.
+
+8. NO WARRANTY
+TO THE FULLEST EXTENT PERMITTED BY LAW, THE SOFTWARE IS PROVIDED "AS IS" AND "AS AVAILABLE",
+WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, OR THAT THE SOFTWARE WILL BE ERROR-FREE OR
+WILL NOT CAUSE DATA LOSS.
+
+9. LIMITATION OF LIABILITY
+TO THE FULLEST EXTENT PERMITTED BY LAW, LAVATI WILL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL,
+SPECIAL, CONSEQUENTIAL OR PUNITIVE DAMAGES, OR FOR LOSS OF DATA, PROFITS OR GOODWILL, ARISING
+FROM OR RELATED TO THE SOFTWARE, EVEN IF ADVISED OF THEIR POSSIBILITY. LAVATI'S TOTAL LIABILITY FOR
+ALL CLAIMS RELATING TO THE SOFTWARE WILL NOT EXCEED USD 10, BECAUSE THE SOFTWARE IS PROVIDED FREE OF
+CHARGE. NOTHING IN THIS AGREEMENT EXCLUDES LIABILITY THAT CANNOT BE EXCLUDED BY LAW.
+
+10. TERMINATION
+This agreement ends automatically if you breach it. You can end it at any time by uninstalling the
+Software and deleting all copies. Sections 7 to 9 and 11 survive termination.
+
+11. GENERAL
+If any part of this agreement is unenforceable, the rest remains in effect. This is the entire agreement
+between you and Lavati about the Software and replaces earlier understandings about it. Consumer rights
+that cannot be waived under the law of your country are not affected.
+
+Copyright (C) Lavati Softwares. All rights reserved.

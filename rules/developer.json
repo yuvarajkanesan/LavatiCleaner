@@ -1,0 +1,22 @@
+{
+  "rules": [
+    {"id": "npm_cache", "category": "Developer", "label": "npm cache", "risk": "review",
+     "paths": ["%LOCALAPPDATA%\\npm-cache", "%APPDATA%\\npm-cache"], "quarantine": false},
+    {"id": "pip_cache", "category": "Developer", "label": "pip cache", "risk": "review",
+     "paths": ["%LOCALAPPDATA%\\pip\\Cache"], "quarantine": false},
+    {"id": "nuget_cache", "category": "Developer", "label": "NuGet HTTP cache", "risk": "review",
+     "paths": ["%LOCALAPPDATA%\\NuGet\\v3-cache", "%LOCALAPPDATA%\\NuGet\\plugins-cache"], "quarantine": false},
+    {"id": "gradle_cache", "category": "Developer", "label": "Gradle caches", "risk": "review",
+     "paths": ["%USERPROFILE%\\.gradle\\caches"], "requires_closed": ["java.exe"], "quarantine": false,
+     "note": "Dependencies are re-downloaded on the next build."},
+    {"id": "maven_repo", "category": "Developer", "label": "Maven local repository", "risk": "review",
+     "paths": ["%USERPROFILE%\\.m2\\repository"], "quarantine": false,
+     "note": "Dependencies are re-downloaded on the next build."},
+    {"id": "android_build_cache", "category": "Developer", "label": "Android build cache", "risk": "review",
+     "paths": ["%USERPROFILE%\\.android\\build-cache", "%USERPROFILE%\\.android\\cache"], "quarantine": false},
+    {"id": "pycache", "category": "Developer", "label": "Python __pycache__", "risk": "safe",
+     "paths": ["%USERPROFILE%\\source", "%USERPROFILE%\\projects", "%USERPROFILE%\\dev", "%USERPROFILE%\\code",
+               "%USERPROFILE%\\Documents\\GitHub"],
+     "dir_name": "__pycache__", "include": ["*.pyc", "*.pyo"], "quarantine": false}
+  ]
+}

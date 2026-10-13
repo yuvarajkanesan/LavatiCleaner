@@ -1,0 +1,20 @@
+Lavati Cleaner includes the following third-party components.
+
+IBM Plex Sans  (fonts\ibm-plex-sans-*.ttf)
+  Copyright (c) IBM Corp. Licensed under the SIL Open Font License, Version 1.1.
+  https://github.com/IBM/plex   License text: https://openfontlicense.org
+
+JetBrains Mono  (fonts\jetbrains-mono-*.ttf)
+  Copyright (c) JetBrains s.r.o. Licensed under the SIL Open Font License, Version 1.1.
+  https://github.com/JetBrains/JetBrainsMono   License text: https://openfontlicense.org
+
+Python and Tcl/Tk  (runtime bundled by PyInstaller)
+  Python Software Foundation License, https://docs.python.org/3/license.html
+  Tcl/Tk BSD-style license, https://www.tcl.tk/software/tcltk/license.html
+
+PyInstaller  (build tool; its bootloader is embedded in the executable)
+  GPL-2.0-or-later with the PyInstaller bootloader exception, which permits distributing
+  executables built with it under any licence. https://pyinstaller.org
+
+The SIL Open Font License permits bundling and redistributing the fonts with software, provided this
+notice and the licence accompany them. The full licence text is at the address above.

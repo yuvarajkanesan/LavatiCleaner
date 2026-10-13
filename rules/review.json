@@ -1,0 +1,17 @@
+{
+  "rules": [
+    {"id": "windows_update", "category": "Windows", "label": "Windows Update download cache", "risk": "review",
+     "paths": ["%SystemRoot%\\SoftwareDistribution\\Download"], "requires_admin": true, "quarantine": false,
+     "note": "Windows re-downloads updates if needed. Stop pending updates first."},
+    {"id": "delivery_optimization", "category": "Windows", "label": "Delivery Optimization cache", "risk": "review",
+     "paths": ["%SystemRoot%\\ServiceProfiles\\NetworkService\\AppData\\Local\\Microsoft\\Windows\\DeliveryOptimization\\Cache"],
+     "requires_admin": true, "quarantine": false},
+    {"id": "prefetch", "category": "Windows", "label": "Prefetch files", "risk": "review",
+     "paths": ["%SystemRoot%\\Prefetch"], "include": ["*.pf"], "recursive": false, "requires_admin": true,
+     "quarantine": false, "note": "Windows rebuilds these; first launches may be slightly slower."},
+    {"id": "old_installers", "category": "Downloads", "label": "Old installers in Downloads", "risk": "review",
+     "paths": ["%USERPROFILE%\\Downloads"], "include": ["*.exe", "*.msi", "*.msix", "*.iso"],
+     "recursive": false, "min_age_days": 60, "quarantine": true,
+     "note": "Moved to quarantine so you can restore them for 7 days."}
+  ]
+}
