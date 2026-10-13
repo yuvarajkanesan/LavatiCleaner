@@ -127,3 +127,28 @@ begin
       mbConfirmation, MB_YESNO) = IDYES;
   Result := True;
 end;
+
+const
+  UninstKey = 'Software\Microsoft\Windows\CurrentVersion\Uninstall\{3B1D7E52-91A4-4F0C-8C63-5E2A7D9B4C10}_is1';
+
+{ If a copy is already installed (per-user or all-users), say so and ask before upgrading it. }
+function InitializeSetup(): Boolean;
+var
+  Ver, Msg: String;
+begin
+  Result := True;
+  Ver := '';
+  if not RegQueryStringValue(HKCU, UninstKey, 'DisplayVersion', Ver) then
+    if not RegQueryStringValue(HKLM, UninstKey, 'DisplayVersion', Ver) then
+      Ver := '';
+  if (Ver <> '') and not WizardSilent then
+  begin
+    if CompareText(Ver, '{#AppVersion}') = 0 then
+      Msg := '{#AppName} ' + Ver + ' is already installed on this computer.' + #13#10 + #13#10 +
+             'Reinstall it? Your settings and history are kept.'
+    else
+      Msg := '{#AppName} ' + Ver + ' is already installed on this computer.' + #13#10 + #13#10 +
+             'Upgrade it to version {#AppVersion}? Your settings and history are kept.';
+    Result := MsgBox(Msg, mbConfirmation, MB_YESNO) = IDYES;
+  end;
+end;

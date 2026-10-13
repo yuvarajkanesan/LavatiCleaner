@@ -15,6 +15,13 @@ def rrect(cv, x1, y1, x2, y2, r, **kw):
     return cv.create_polygon(pts, smooth=True, **kw)
 
 
+def _mix(c1: str, c2: str, t: float) -> str:
+    """Blend two #rrggbb colours (t=0 -> c1, t=1 -> c2). Tk has no alpha, so glows are faked this way."""
+    a = [int(c1[i:i + 2], 16) for i in (1, 3, 5)]
+    b = [int(c2[i:i + 2], 16) for i in (1, 3, 5)]
+    return "#%02x%02x%02x" % tuple(round(x + (y - x) * t) for x, y in zip(a, b))
+
+
 class Card(tk.Frame):
     """Rounded panel hosting `.body`. The frame sizes itself from its content (or fills what it is given)."""
 
@@ -51,6 +58,7 @@ class Btn(tk.Canvas):
         self.font = theme.F(10, True)
         self._padx, self._h = padx, height
         self._text = text
+        self._pulse, self._phase = False, 0.0
         self._fit()
         self.bind("<Enter>", lambda _e: self._set_hover(True))
         self.bind("<Leave>", lambda _e: self._set_hover(False))
@@ -65,6 +73,27 @@ class Btn(tk.Canvas):
         self._text = text
         self._fit()
         self._draw()
+
+    def set_kind(self, kind: str):
+        self.kind = kind
+        self._draw()
+
+    def start_pulse(self):
+        """Breathing amber glow around the button: draws the eye to the one thing to press."""
+        if not self._pulse:
+            self._pulse = True
+            self._tick()
+
+    def stop_pulse(self):
+        self._pulse = False
+        self._draw()
+
+    def _tick(self):
+        if not self._pulse or not self.winfo_exists():
+            return
+        self._phase += 0.16
+        self._draw()
+        self.after(40, self._tick)
 
     def set_enabled(self, on: bool):
         self.enabled = on
@@ -89,7 +118,14 @@ class Btn(tk.Canvas):
         else:
             fill = theme.CARD_HI if self._hover and self.enabled else self.master.cget("bg")
             fg, out = (theme.TEXT if self.enabled else theme.FAINT), theme.BORDER
-        rrect(self, 1, 1, w - 1, h - 1, 10, fill=fill, outline=out)
+        inset = 0
+        if self._pulse and self.enabled:
+            import math
+            t = (1 + math.sin(self._phase)) / 2
+            glow = _mix(self.master.cget("bg"), theme.AMBER, 0.2 + 0.8 * t)
+            rrect(self, 1, 1, w - 1, h - 1, 13, fill="", outline=glow, width=2)
+            inset = 5
+        rrect(self, 1 + inset, 1 + inset, w - 1 - inset, h - 1 - inset, 10, fill=fill, outline=out)
         self.create_text(w / 2, h / 2, text=self._text, font=self.font, fill=fg)
 
 

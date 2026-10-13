@@ -93,12 +93,12 @@ class DashboardPage(Page):
         self.big.pack(side="left")
         self.unit = label(num, "", 20, fg=theme.MUTED, mono=True)
         self.unit.pack(side="left", padx=(12, 0), anchor="s", pady=(0, 10))
-        self.sub = label(left, "Press Scan to see what can be cleaned.", 10, fg=theme.MUTED)
+        self.sub = label(left, "Press “Scan your PC” to see what can be cleaned. Nothing is deleted yet.", 10, fg=theme.MUTED)
         self.sub.pack(anchor="w", pady=(0, 18))
         btns = tk.Frame(left, bg=theme.CARD)
         btns.pack(anchor="w")
         self.review_btn = Btn(btns, "Review and clean", lambda: app.show("Cleaner"), "primary")
-        self.scan_btn = Btn(btns, "Scan", app.start_scan, "ghost")
+        self.scan_btn = Btn(btns, "Scan your PC", app.start_scan, "ghost", padx=26)
         self.review_btn.pack(side="left")
         self.scan_btn.pack(side="left", padx=(12, 0))
         right = tk.Frame(hb, bg=theme.CARD)
@@ -166,7 +166,14 @@ class DashboardPage(Page):
         if a.managed_info.get("managed"):
             self.managed_pill = Pill(self.header_row, "Managed PC", "review", size=9)
             self.managed_pill.pack(side="right", padx=(0, 10), before=self.admin_pill)
-        self.scan_btn.configure_text("Scan again" if a.results else "Scan")
+        if a.results:
+            self.scan_btn.stop_pulse()
+            self.scan_btn.set_kind("ghost")
+            self.scan_btn.configure_text("Scan again")
+        else:                       # first visit: make the one thing to press impossible to miss
+            self.scan_btn.set_kind("primary")
+            self.scan_btn.configure_text("Scan your PC")
+            self.scan_btn.start_pulse()
 
         entries: dict[str, list] = {}
         for res in a.results.values():

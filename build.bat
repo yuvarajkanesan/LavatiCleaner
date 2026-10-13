@@ -10,7 +10,16 @@ python -m PyInstaller --noconfirm --clean --windowed --name LavatiCleaner ^
   --icon assets\lavati.ico --version-file version_info.txt ^
   --add-data "rules;rules" --add-data "fonts;fonts" --add-data "assets;assets" ^
   --add-data "LICENSE.txt;." --add-data "THIRD_PARTY_NOTICES.txt;." --add-data "PRIVACY.md;." --add-data "SECURITY.md;." ^
+  --exclude-module ssl --exclude-module _ssl --exclude-module _hashlib ^
+  --exclude-module win32api --exclude-module win32con --exclude-module pywintypes --exclude-module win32com ^
+  --exclude-module _decimal --exclude-module _lzma --exclude-module _bz2 --exclude-module _zstd ^
+  --exclude-module pydoc --exclude-module doctest --exclude-module unittest ^
   main.py || goto :err
+call :trim || goto :err
+rem smoke-test the packaged exe (start /wait because it is a windowed app)
+start /wait "" dist\LavatiCleaner\LavatiCleaner.exe --selftest
+if errorlevel 1 (echo Packaged selftest FAILED & goto :err)
+echo Packaged selftest OK
 call :sign dist\LavatiCleaner\LavatiCleaner.exe || goto :err
 echo.
 echo Built: dist\LavatiCleaner\LavatiCleaner.exe
@@ -27,6 +36,13 @@ if defined ISCC (
 ) else (
   echo Inno Setup not found - skipping installer. Install it from https://jrsoftware.org/isdl.php and re-run.
 )
+exit /b 0
+
+:trim
+rem drop Tcl/Tk data the app never uses: translations, time zones and non-Western code pages
+set I=dist\LavatiCleaner\_internal
+rmdir /s /q "%I%\_tcl_data\msgs" "%I%\_tcl_data\tzdata" "%I%\_tk_data\msgs" 2>nul
+powershell -NoProfile -Command "Get-ChildItem '%I%\_tcl_data\encoding\*.enc' | Where-Object { $_.BaseName -notin 'cp1252','cp1250','cp1251','cp437','cp850','iso8859-1','iso8859-15','ascii','unicode' } | Remove-Item"
 exit /b 0
 
 :sign
